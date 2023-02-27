@@ -70,6 +70,7 @@ void *memset(void *s, int c, size_t n) {
 	for(int i = 0; i < n; ++ i) {
 		ss[i] = c;
 	}
+	return s;
 }
 
 void *memcpy(void *out, const void *in, size_t n) {
