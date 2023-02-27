@@ -1,4 +1,5 @@
 #include <blib.h>
+#include <cstdio>
 
 const char *s[] = {"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 	     "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab",
@@ -31,6 +32,7 @@ int main() {
 	panic_on((strlen(s[0]) != 38), "check failed at");
 	panic_on((strlen("") != 0), "check failed at");
 
+	printf("1");
 	panic_on((strcmp(s[0], s[2]) != 0), "check failed at");
 	panic_on((strcmp(s[0], s[1]) >= 0), "check failed at");
 	panic_on((strcmp(s[0] + 1, s[1] + 1) >= 0), "check failed at");
@@ -40,6 +42,7 @@ int main() {
 	panic_on((strcmp("aa", s[1]) >= 0), "check failed at");
 	panic_on((strcmp(s[1], "aa") <= 0), "check failed at");
 
+	printf("2");
 	char *tmp = strncpy(str, str1, 3);
 	panic_on((strncmp(tmp, str1, 3) != 0), "check failed at");
 	tmp = strcpy(str, str1);
@@ -47,10 +50,13 @@ int main() {
 	tmp = strcat(tmp, s[3]);
 	panic_on((strcmp(tmp, s[4]) != 0), "check failed at");
 
+	printf("3");
 	panic_on((memcmp(s[0], s[2], n) != 0), "check failed at");
 	panic_on((memcmp(s[0], s[1], n) >= 0), "check failed at");
 	panic_on((memcmp(s[1], s[0], n) <= 0), "check failed at");
 
+
+	printf("4");
 	void *mem = memset(str, '#', 5);
 	panic_on((memcmp(mem, s[5], 5) != 0), "check failed at");
 	putstr("string test pass!\n");
