@@ -1,0 +1,48 @@
+\section{思考题}
+
+\subsection{箭头与思考}
+\begin{itemize}
+	\item \texttt{Add the file: git add file}
+	\item \texttt{Stage the file: git add file}
+	\item \texttt{Commit: git commit file -m message}
+\end{itemize}
+
+\subsection{Git 的一些场景}
+\begin{itemize}
+	\item 代码文件 \texttt{print.c} 被错误删除时，应当使用什么命令将其恢复
+	\begin{itemize}
+		\item \texttt{git checkout -- print.c}
+	\end{itemize}
+	\item 代码文件 \texttt{print.c} 被错误删除后，执行了 \texttt{git rm print.c} 命令，此时应当使用什么命令将其恢复？
+	\begin{itemize}
+		\item \texttt{git reset HEAD print.c \# 取消暂存}
+		\item \texttt{git checkout -- print.c \# 从暂存区恢复文件到工作区，在没有对应分支时可不加横杠} 
+	\end{itemize}
+	\item 无关文件 \texttt{hello.txt} 已经被添加到暂存区时，如何在不删除此文件的前提下将其移出暂存区？
+	\begin{itemize}
+		\item \texttt{git rm --cache hello.txt}
+	\end{itemize}
+\end{itemize}
+
+\subsection{文件操作}
+
+\lstset{style=sh}
+\lstinputlisting{command}
+\lstinputlisting{test}
+\lstinputlisting{result}
+
+\texttt{result} 保存的分别是 \texttt{file1} 中 \texttt{c} 的值，
+\texttt{file2} 中 \texttt{b} 的值和\texttt{file3} 中 \texttt{a} 的值。
+更前一步则是来自 \texttt{test} 中对 \texttt{a,b,c} 的赋值，计算和储存。
+
+\texttt{echo} 命令在不同情况下的行为：
+
+\begin{itemize}
+	\item 命令 \texttt{echo message} 中，将输出 \texttt{message} 转义后的内容（似乎有多次转义导致 \texttt{'\textbackslash n'} 在首次没有作为换行符转义，而是返回 \texttt{'n'}）。
+	\item 命令 \texttt{echo 'message'} 中，将输出 \texttt{message} 的原始内容。
+	\item 命令 \texttt{echo "message"} 中，将输出 \texttt{message} 转义时会无视文件通配符，但会转义 \texttt{\$,\textbackslash}。
+	\item 命令 \texttt{echo `message`} 中，将输出 \texttt{message} 作为命令的执行结果。
+\end{itemize}
+
+所以显然 \texttt{echo echo Shell Start} 和 \texttt{echo `echo Shell Start`}
+以及 \texttt{echo echo \$c>file1} 与 \texttt{echo `echo \$c>file1`} 效果不同。

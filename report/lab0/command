@@ -1,0 +1,21 @@
+#!/bin/bash
+echo echo Shell Start...
+echo echo set a = 1
+echo a=1
+echo echo set b = 2
+echo b=2
+echo echo set c = a+b
+echo c=\$[\$a+\$b]
+echo echo c = \$c
+echo echo save c to ./file1
+echo echo \$c\>file1
+echo echo save b to ./file2
+echo echo \$b\>file2
+echo echo save a to ./file3
+echo echo \$a\>file3
+echo echo save file1 file2 file3 to file4
+echo cat file1\>file4
+echo cat file2\>\>file4
+echo cat file3\>\>file4
+echo echo save file4 to ./result
+echo cat file4\>\>result
