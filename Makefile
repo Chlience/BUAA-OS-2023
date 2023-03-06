@@ -5,4 +5,4 @@ run:
 	./test
 
 clean:
-	rm -rf test.c
+	rm -rf test
