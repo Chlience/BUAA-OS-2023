@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir mydir
+mkdir -p  mydir
 chmod 777 mydir
 
 echo 2023 > myfile
@@ -13,7 +13,7 @@ cat readme
 
 gcc bad.c 2>err.txt
 
-mkdir gen
+mkdir -p gen
 n=10
 if (($# > 0))
 then
@@ -21,6 +21,6 @@ then
 fi
 while (($n > 0))
 do
-	touch gen/"$n.txt"
+	echo "" >gen/"$n.txt"
 	let n=n-1
 done
