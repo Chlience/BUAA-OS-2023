@@ -12,3 +12,10 @@ gcc bad.c 2>err.txt
 echo "test"
 
 mkdir gen
+
+n=10
+
+if (($# == 1))
+	n=$1
+fi
+
