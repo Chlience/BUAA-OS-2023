@@ -1,5 +1,3 @@
-#!/bin/bash
-
 rm -rf mydir
 mkdir -p mydir
 chmod 777 mydir
