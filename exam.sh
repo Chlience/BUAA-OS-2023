@@ -1,6 +1,7 @@
 #!/bin/bash
 
-mkdir -p  mydir
+rm -rf mydir
+mkdir -p mydir
 chmod 777 mydir
 
 echo 2023 > myfile
@@ -13,6 +14,7 @@ cat readme
 
 gcc bad.c 2>err.txt
 
+rm -rf gen
 mkdir -p gen
 n=10
 if (($# > 0))
