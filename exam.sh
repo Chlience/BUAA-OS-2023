@@ -13,9 +13,11 @@ echo "test"
 
 mkdir gen
 
-n=10
+var=10
 
 if (($# == 1))
-	n=$1
+then
+	let var=$1
 fi
 
+echo $var
