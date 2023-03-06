@@ -16,6 +16,7 @@ else
     ;;
     "--diff")
         # Your code here. (4/4)
+	echo hello
     ;;
     esac
 fi
