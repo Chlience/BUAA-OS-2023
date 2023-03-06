@@ -9,8 +9,6 @@ cat readme
 
 gcc bad.c 2>err.txt
 
-echo "test"
-
 mkdir gen
 
 n=10
