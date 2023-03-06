@@ -12,7 +12,7 @@ else
     ;;
     "--find")
         # Your code here. (3/4)
-        grep -E $3 $1
+        grep -E $3 $1 >$3.txt
     ;;
     "--diff")
         # Your code here. (4/4)
