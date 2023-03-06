@@ -5,9 +5,9 @@ chmod 777 mydir
 
 echo 2023 > myfile
 
-mv moveme mydir/
+mv -f moveme mydir/
 
-cp copyme mydir/copied
+cp -f copyme mydir/copied
 
 cat readme
 
