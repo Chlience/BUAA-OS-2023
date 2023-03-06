@@ -12,17 +12,3 @@ gcc bad.c 2>err.txt
 echo "test"
 
 mkdir gen
-
-n=10
-
-if (($# > 0))
-then
-    let n=$1
-fi
-
-while (($n > 0))
-do
-    echo "" > gen/"$n.txt"
-    let n=n-1
-done
-
