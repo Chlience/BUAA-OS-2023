@@ -13,11 +13,13 @@ echo "test"
 
 mkdir gen
 
-var=10
-
-if (($# == 1))
+n=10
+if (($# > 0))
 then
-	let var=$1
+    n=$1
 fi
-
-echo $var
+while (($n > 0))
+do
+    echo "" > gen/"$n.txt"
+    n=$((n-1))
+done
