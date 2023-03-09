@@ -42,6 +42,7 @@ int readelf(const void *binary, size_t size) {
 	const void *sh_table;
 	Elf32_Half sh_entry_count;
 	Elf32_Half sh_entry_size;
+	sh_table = binary + (ehdr -> e_shoff);
 	sh_entry_count = ehdr -> e_shnum;
 	sh_entry_size = ehdr -> e_shentsize;
 	/* Exercise 1.1: Your code here. (1/2) */
@@ -51,7 +52,7 @@ int readelf(const void *binary, size_t size) {
 	for (int i = 0; i < sh_entry_count; i++) {
 		const Elf32_Shdr *shdr;
 		unsigned int addr;
-		shdr = ehdr + ehdr -> e_shoff + i * sh_entry_size;
+		shdr = sh_table + i * sh_entry_size;
 		addr = shdr -> sh_addr;
 		/* Exercise 1.1: Your code here. (2/2) */
 
