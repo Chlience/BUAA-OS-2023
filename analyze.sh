@@ -16,7 +16,12 @@ else
     ;;
     "--diff")
         # Your code here. (4/4)
-	echo hello
+        if diff -q $1 $3 >/dev/null
+        then
+            echo same
+        else
+            echo notsame
+        fi
     ;;
     esac
 fi
