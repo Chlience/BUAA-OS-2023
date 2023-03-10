@@ -40,6 +40,8 @@ void vprintfmt(fmt_callback_t out, void *data, const char *fmt, va_list ap) {
 
 		/* check format flag */
 		/* Exercise 1.4: Your code here. (5/8) */
+		padc = ' ';
+		ladjust = 0;
 		switch (*fmt) {
 			case '-': {
 				ladjust = 1;
