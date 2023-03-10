@@ -19,24 +19,56 @@ void vprintfmt(fmt_callback_t out, void *data, const char *fmt, va_list ap) {
 	for (;;) {
 		/* scan for the next '%' */
 		/* Exercise 1.4: Your code here. (1/8) */
+		while(*fmt != '%' && *fmt != '\0') {
+			out(data, fmt, 1);
+			fmt++;
+		}
 
 		/* flush the string found so far */
 		/* Exercise 1.4: Your code here. (2/8) */
 
 		/* check "are we hitting the end?" */
 		/* Exercise 1.4: Your code here. (3/8) */
+		if(*fmt == '\0')
+			break;
 
 		/* we found a '%' */
 		/* Exercise 1.4: Your code here. (4/8) */
+		if(*fmt == '%') {
+			fmt++;
+		}
 
 		/* check format flag */
 		/* Exercise 1.4: Your code here. (5/8) */
-
+		switch (*fmt) {
+			case '-': {
+				ladjust = 1;
+				fmt++;
+				break;
+			}
+			case '0': {
+				padc = '0';
+				fmt++;
+				break;
+			}
+			default: {
+				break;
+			}
+		}
 		/* get width */
 		/* Exercise 1.4: Your code here. (6/8) */
+		width = 0;
+		while(*fmt >= '0' && *fmt <= '9') {
+			width = width * 10 + (*fmt - '0');
+			fmt++;
+		}
 
 		/* check for long */
 		/* Exercise 1.4: Your code here. (7/8) */
+		if(*fmt == 'l') {
+			long_flag = 1;
+			fmt++;
+		}
 
 		neg_flag = 0;
 		switch (*fmt) {
@@ -63,6 +95,11 @@ void vprintfmt(fmt_callback_t out, void *data, const char *fmt, va_list ap) {
 			 * others. (hint: 'neg_flag').
 			 */
 			/* Exercise 1.4: Your code here. (8/8) */
+			if(num < 0) {
+				num = - num;
+				neg_flag = 1;
+			}
+			print_num(out, data, num, 10, neg_flag, width, ladjust, padc, 0);
 
 			break;
 
