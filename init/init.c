@@ -14,9 +14,9 @@
 void mips_init() {
 	printk("init.c:\tmips_init() is called\n");
 	char str[100];
-	sprintf(str, "%d\n", 12321);
+	printk("%d\n", sprintf(str, "%d\n", 12321));
 	printk("%s", str);
-	sprintf(str, "%c\n", 97);
+	printk("%d\n", sprintf(str, "%c\n", 97));
 	printk("%s", str);
 	// lab2:
 	// mips_detect_memory();
