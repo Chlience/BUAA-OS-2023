@@ -99,6 +99,14 @@ int strcmp(const char *p, const char *q) {
 
 int mylength;
 
+void soutput(void *data, const char *buf, size_t len) {
+	char* mybuff = (char*) data;
+	for (int i = 0; i < len; i++) {
+		mybuff[mylength + i] = buf[i];
+	}
+	mylength += len;
+}
+
 int sprintf(char *buf, const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
@@ -106,12 +114,4 @@ int sprintf(char *buf, const char *fmt, ...) {
 	vprintfmt(soutput, buf, fmt, ap);
 	va_end(ap);
 	return mylength;
-}
-
-void soutput(void *data, const char *buf, size_t len) {
-	char* mybuff = (char*) data;
-	for (int i = 0; i < len; i++) {
-		mybuff[mylength + i] = buf[i];
-	}
-	mylength += len;
 }
