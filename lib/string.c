@@ -1,5 +1,5 @@
 #include <types.h>
-#include "print.c"
+#include <print.h>
 
 void *memcpy(void *dst, const void *src, size_t n) {
 	void *dstaddr = dst;
@@ -108,8 +108,8 @@ int sprintf(char *buf, const char *fmt, ...) {
 	return mylength;
 }
 
-void soutput(void *data, const char *buf, size_t len {
-	mybuff = (char*) data;
+void soutput(void *data, const char *buf, size_t len) {
+	char* mybuff = (char*) data;
 	for (int i = 0; i < len; i++) {
 		mybuff[mylength + i] = buf[i];
 	}
