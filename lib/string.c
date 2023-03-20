@@ -112,7 +112,7 @@ int sprintf(char *buf, const char *fmt, ...) {
 	va_start(ap, fmt);
 	mylength = 0;
 	vprintfmt(soutput, buf, fmt, ap);
-	buf[mylength] = '\0'
+	buf[mylength] = '\0';
 	va_end(ap);
 	return mylength;
 }
