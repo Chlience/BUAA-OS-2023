@@ -13,6 +13,9 @@
 
 void mips_init() {
 	printk("init.c:\tmips_init() is called\n");
+	printk("This is a range: %8R", 2023, 2023);
+	printk("This is a range: %8R", -2023, 2023);
+	printk("This is a range: %8R", -1, 1);
 
 	// lab2:
 	// mips_detect_memory();

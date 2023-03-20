@@ -107,27 +107,28 @@ void vprintfmt(fmt_callback_t out, void *data, const char *fmt, va_list ap) {
 
 		case 'R':
 			print_char(out, data, '(', 0, ladjust);
-                        if (long_flag) {
-                                num = va_arg(ap, long int);
-                        } else {
-                                num = va_arg(ap, int);
-                        }
-                        if(num < 0) {
-                                num = - num;
-                                neg_flag = 1;
-                        }
-                        print_num(out, data, num, 10, neg_flag, width, ladjust, padc, 0);
-                        print_char(out, data, ',', 0, ladjust);
 			if (long_flag) {
-                                num = va_arg(ap, long int);
-                        } else {
-                                num = va_arg(ap, int);
-                        }
-                        if(num < 0) {
-                                num = - num;
-                                neg_flag = 1;
-                        }
-                        print_num(out, data, num, 10, neg_flag, width, ladjust, padc, 0);
+				num = va_arg(ap, long int);
+			} else {
+				num = va_arg(ap, int);
+			}
+			if(num < 0) {
+				num = - num;
+				neg_flag = 1;
+			}
+			print_num(out, data, num, 10, neg_flag, width, ladjust, padc, 0);
+			print_char(out, data, ',', 0, ladjust);
+			neg_flag = 0;
+			if (long_flag) {
+				num = va_arg(ap, long int);
+			} else {
+				num = va_arg(ap, int);
+			}
+			if(num < 0) {
+				num = - num;
+				neg_flag = 1;
+			}
+			print_num(out, data, num, 10, neg_flag, width, ladjust, padc, 0);
 			print_char(out, data, ')', 0, ladjust);
 			break;
 
