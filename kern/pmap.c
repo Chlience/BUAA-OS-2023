@@ -189,7 +189,7 @@ static int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte) {
 	 * page directory.
 	 * If failed to allocate a new page (out of memory), return the error. */
 	/* Exercise 2.6: Your code here. (2/3) */
-	if(!(*pgdir) & PTE_V) {
+	if(((*pgdir_entryp) & PTE_V) == 0) {
 		if(!create) {
 			*ppte = NULL;
 			return 0;
@@ -205,7 +205,7 @@ static int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte) {
 	/* Step 3: Assign the kernel virtual address of the page table entry to '*ppte'. */
 	/* Exercise 2.6: Your code here. (3/3) */
 	pgdir_entryp = (Pde*)PTE_ADDR(*pgdir_entryp) + PTX(va);
-	*ppte = KADDR(pgdir_entryp);
+	*ppte = KADDR((u_long)pgdir_entryp);
 	return 0;
 }
 
@@ -236,17 +236,23 @@ int page_insert(Pde *pgdir, u_int asid, struct Page *pp, u_long va, u_int perm) 
 			return 0;
 		}
 	}
-
 	/* Step 2: Flush TLB with 'tlb_invalidate'. */
 	/* Exercise 2.7: Your code here. (1/3) */
+	tlb_invalidate(asid, va);
 
 	/* Step 3: Re-get or create the page table entry. */
 	/* If failed to create, return the error. */
 	/* Exercise 2.7: Your code here. (2/3) */
+	int ret = pgdir_walk(pgdir, va, 1, &pte);
+	if(ret != 0) {
+		return ret;
+	}
 
 	/* Step 4: Insert the page to the page table entry with 'perm | PTE_V' and increase its
 	 * 'pp_ref'. */
 	/* Exercise 2.7: Your code here. (3/3) */
+	*pte = page2pa(pp) | perm | PTE_V;
+	pp->pp_ref++;
 
 	return 0;
 }
