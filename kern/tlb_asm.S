@@ -30,21 +30,22 @@ END(tlb_out)
 
 .data
 tlb_refill_ra:
-.word 0
+.word 0	/* ??? */
 .text
 NESTED(do_tlb_refill, 0, zero)
-	mfc0    a0, CP0_BADVADDR
-	mfc0    a1, CP0_ENTRYHI
-	srl     a1, a1, 6
-	andi    a1, a1, 0b111111
-	sw      ra, tlb_refill_ra
-	jal     _do_tlb_refill
-	lw      ra, tlb_refill_ra
-	mtc0    v0, CP0_ENTRYLO0
+	mfc0    a0, CP0_BADVADDR		/* 缺失的虚拟地址 */
+	mfc0    a1, CP0_ENTRYHI			/* 准备获取 ASID */
+	srl     a1, a1, 6				/* 将 ASID 移动至低位 */
+	andi    a1, a1, 0b111111		/* 取得 ASID */
+	sw      ra, tlb_refill_ra		/* 存 ra */
+	jal     _do_tlb_refill			/* 调用重填 */
+	lw      ra, tlb_refill_ra		/* 取 ra */
+	mtc0    v0, CP0_ENTRYLO0		/* Page 物理地址 */
 	/* See <IDT R30xx Family Software Reference Manual> Chapter 6-8
 	nop
 	/* Hint: use 'tlbwr' to write CP0.EntryHi/Lo into a random tlb entry. */
 	/* Exercise 2.10: Your code here. */
+	tlbwr
 
 	jr      ra
 END(do_tlb_refill)

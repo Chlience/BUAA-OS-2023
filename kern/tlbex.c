@@ -1,6 +1,5 @@
 #include <env.h>
 #include <pmap.h>
-
 static void passive_alloc(u_int va, Pde *pgdir, u_int asid) {
 	struct Page *p = NULL;
 
@@ -42,6 +41,14 @@ Pte _do_tlb_refill(u_long va, u_int asid) {
 	 */
 
 	/* Exercise 2.9: Your code here. */
+	struct Page *pp;
+	while(1) {
+		pp = page_lookup(cur_pgdir, va, &pte);
+		if(pp == NULL) {
+			passive_alloc(va, cur_pgdir, asid);
+		}
+		else break;
+	}
 
 	return *pte;
 }
