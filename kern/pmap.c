@@ -538,11 +538,42 @@ void swap_init() {
 	}
 }
 
+void swap_out_flush_page_table(Pde *pgdir, u_int asid, struct Page *pp, struct Page *outpp) {
+	Pde *pgdir_entryp;
+	u_long i, j;
+	u_long va;
+	for(i = 0; i < 1024; ++ i) {
+		pgdir_entryp = pgdir + i;
+		if ((*pgdir_entryp & PTE_V) == 0) {
+			continue;
+		}
+		for(j = 0; j < 1024; ++ j) {
+			Pte *pte_p = (Pte*)PTE_ADDR(*pgdir_entryp) + j; // 二级页表项物理地址
+			Pte *pte = KADDR((u_long)pte_p); // 二级页表项虚拟地址
+			if(*pte & PTE_V) {
+				u_long ppn = PPN(*pte);
+				if(ppn == page2ppn(pp)) {
+					u_int perm = (*pte) & (0xfff - PTE_V);
+					*pgdir_entryp = page2pa(outpp) | perm | PTE_SWP;
+					tlb_invalidate(asid, (i << 22) | (j << 12));
+				}
+			}
+		}
+	}
+	return 0;
+}
+
 // Interface for 'Passive Swap Out'
 struct Page *swap_alloc(Pde *pgdir, u_int asid) {
 	// Step 1: Ensure free page
 	if (LIST_EMPTY(&page_free_swapable_list)) {
 		/* Your Code Here (1/3) */
+		// swap 0x3900000 out and return it
+		struct Page *pp = pa2page(0x3900000);
+		u_char *da = disk_alloc();
+		swap_out_flush_page_table(pgdir, asid, pp, pa2page(va2pa(da)));
+		memcpy(KADDR(swap_page_pa), da, BY2PG);
+		LIST_INSERT_HEAD(pp, pp_link);
 	}
 
 	// Step 2: Get a free page and clear it
@@ -570,8 +601,60 @@ static int is_swapped(Pde *pgdir, u_long va) {
 	return 0;
 }
 
+static int swap_pte(Pde *pgdir, u_long va, struct **Pte ppte) {
+	/* Your Code Here (2/3) */
+	Pde *pgdir_entryp;
+	struct Page *pp;
+	pgdir_entryp = pgdir + PDX(va);
+	if(((*pgdir_entryp) & PTE_V) == 0) {
+		return 1;
+	}
+	Pte *pte_p = (Pte*)PTE_ADDR(*pgdir_entryp) + PTX(va);
+	Pte *pte = KADDR((u_long)pte_p);
+	if ((*pte) & PTE_SWP) {
+		*ppte = pte;
+		return 0;
+	}
+	return 1;
+}
+
+void swap_in_flush_page_table(Pde *pgdir, u_int asid, struct Page *pp, struct Page *outpp) {
+	Pde *pgdir_entryp;
+	u_long i, j;
+	u_long va;
+	for(i = 0; i < 1024; ++ i) {
+		pgdir_entryp = pgdir + i;
+		if ((*pgdir_entryp & PTE_V) == 0) {
+			continue;
+		}
+		for(j = 0; j < 1024; ++ j) {
+			Pte *pte_p = (Pte*)PTE_ADDR(*pgdir_entryp) + j; // 二级页表项物理地址
+			Pte *pte = KADDR((u_long)pte_p); // 二级页表项虚拟地址
+			if(*pte & PTE_SWP) {
+				u_long ppn = PPN(*pte);
+				if(ppn == page2ppn(outpp)) {
+					u_int perm = (*pte) & (0xfff - PTE_SWP);
+					*pgdir_entryp = page2pa(pp) | perm | PTE_V;
+					tlb_invalidate(asid, (i << 22) | (j << 12));
+				}
+			}
+		}
+	}
+	return 0;
+}
+
 static void swap(Pde *pgdir, u_int asid, u_long va) {
 	/* Your Code Here (3/3) */
+	struct Pte *pte;
+	swap_pte(pgdir, va, &pte);
+
+	struct Page *outpp = pa2page(*pte);
+	struct Page *pp = swap_alloc(pgdir, asid);
+	swap_in_flush_page_table(pgdir, asid, pp, outpp);
+	u_char *da = page2kva(outpp);
+	u_char *pa = page2kva(pp);
+	memcpy(da, pa, BY2PG);
+	disk_free(da);
 }
 
 Pte swap_lookup(Pde *pgdir, u_int asid, u_long va) {
