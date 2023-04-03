@@ -172,6 +172,7 @@ void env_init(void) {
 	panic_on(page_alloc(&p));
 	p->pp_ref++;
 
+	/* pages, envs 映射到对应虚拟地址暴露给以 base_pgdir 为根页表用户 */
 	base_pgdir = (Pde *)page2kva(p);
 	map_segment(base_pgdir, 0, PADDR(pages), UPAGES, ROUND(npage * sizeof(struct Page), BY2PG),
 		    PTE_G);
@@ -198,6 +199,9 @@ static int env_setup_vm(struct Env *e) {
 	/* Exercise 3.3: Your code here. */
 	p->pp_ref++;
 	e->env_pgdir = (Pde*)page2kva(p);
+	/* kseg0, kseg1 是线性映射区 */
+	/* pa + 0x80000000 后还在线性映射区吗? */
+	/* 假设是，那么 e->ebv_pgdir 指向一个空的物理页 */
 
 	/* Step 2: Copy the template page directory 'base_pgdir' to 'e->env_pgdir'. */
 	/* Hint:
@@ -206,10 +210,17 @@ static int env_setup_vm(struct Env *e) {
 	 */
 	memcpy(e->env_pgdir + PDX(UTOP), base_pgdir + PDX(UTOP),
 	       sizeof(Pde) * (PDX(UVPT) - PDX(UTOP)));
+	/* 复制一级页表 base_pgdir 查询 envs 和 pages 的 pte */
 
 	/* Step 3: Map its own page table at 'UVPT' with readonly permission.
 	 * As a result, user programs can read its page table through 'UVPT' */
 	e->env_pgdir[PDX(UVPT)] = PADDR(e->env_pgdir) | PTE_V;
+	/* env_pgdir 查询 UVPT 的 4M 空间的页表项设置为 env_pgdir 的物理地址 */
+	/* env_pgdir 作为一级页表查询 UVPT 的 4M 空间时，对应的二级页表就是 env_pgdir 本身 */
+	/* env_pgdir 作为二级页表查询时，对应 2^10 个二级页表地址，每个依次映射了一个 4M 的空间 */
+	/* 其中，有一个固定位置的二级页表映射到了 UVPT 的 4M 空间 */
+	/* 显然，这个二级页表和 env_pgdir 一模一样！ */
+	/* 那么将这个二级页表对应的 page 就不用再申请，转而使用 env_pgdir 对应 page 即可 */
 	return 0;
 }
 

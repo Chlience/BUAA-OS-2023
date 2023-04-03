@@ -15,12 +15,12 @@ void mips_init() {
 	printk("init.c:\tmips_init() is called\n");
 
 	// lab2:
-	// mips_detect_memory();
-	// mips_vm_init();
-	// page_init();
+	mips_detect_memory();
+	mips_vm_init();
+	page_init();
 
 	// lab3:
-	// env_init();
+	env_init();
 
 	// lab3:
 	// ENV_CREATE_PRIORITY(user_bare_loop, 1);

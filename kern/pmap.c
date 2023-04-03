@@ -21,14 +21,12 @@ struct Page_list page_free_list; /* Free list of physical pages */
  */
 void mips_detect_memory() {
 	/* Step 1: Initialize memsize. */
+	/* 访问硬件获取总内存 */
 	memsize = *(volatile u_int *)(KSEG1 | DEV_MP_ADDRESS | DEV_MP_MEMORY);
 
 	/* Step 2: Calculate the corresponding 'npage' value. */
 	/* Exercise 2.1: Your code here. */
 	npage = memsize / 4096;
-	/* comment
-	4KB / 1page
-	*/ 
 
 	printk("Memory size: %lu KiB, number of pages: %lu\n", memsize / 1024, npage);
 }
@@ -108,6 +106,8 @@ void page_init(void) {
 
 	/* Step 4: Mark the other memory as free. */
 	/* Exercise 2.3: Your code here. (4/4) */
+	/* 将内核未占用的真实物理页释放 */
+	/* 是否未考虑外设等？ */
 	for (u_long i = PADDR(freemem) / BY2PG; i < npage; ++ i) {
 		pages[i].pp_ref = 0;
 		LIST_INSERT_HEAD(&page_free_list, &pages[i], pp_link);
