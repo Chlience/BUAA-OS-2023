@@ -214,7 +214,7 @@ u_int page_perm_stat(Pde *pgdir, struct Page *pp, u_int perm_mask) {
 	u_int sum = 0;
 	for(i = 0; i < 1024; ++ i) {
 		pgdir_entryp = pgdir + i; // 一级页表项
-		if((*pgdir_entryp) & PTE_V == 0) {
+		if(((*pgdir_entryp) & PTE_V) == 0) {
 			continue;
 		}
 		for(j = 0; j < 1024; ++ j) {
@@ -222,8 +222,8 @@ u_int page_perm_stat(Pde *pgdir, struct Page *pp, u_int perm_mask) {
 			Pte *pte = KADDR((u_long)pte_p); // 二级页表项虚拟地址
 			if(*pte & PTE_V) {
 				u_long ppn = PPN(*pte);
-				u_int ptr_perm = (*ppe) & 0xfff;
-				if(ppn == page2ppn(pp) && ((perm_mask & ptr_perm) & perm_mask) == perm_mask) {
+				u_int pte_perm = (*pte) & 0xfff;
+				if(ppn == page2ppn(pp) && ((perm_mask & pte_perm) & perm_mask) == perm_mask) {
 					sum++;
 				}
 			}
