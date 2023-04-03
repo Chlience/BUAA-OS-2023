@@ -141,7 +141,7 @@ int page_alloc(struct Page **new) {
 	/* Step 2: Initialize this page with zero.
 	 * Hint: use `memset`. */
 	/* Exercise 2.4: Your code here. (2/2) */
-	memset(page2kva(pp), 0, BY2PG);
+	memset((void*)page2kva(pp), 0, BY2PG);
 
 	*new = pp;
 	return 0;
@@ -559,7 +559,6 @@ void swap_out_flush_page_table(Pde *pgdir, u_int asid, struct Page *pp, struct P
 			}
 		}
 	}
-	return 0;
 }
 
 // Interface for 'Passive Swap Out'
