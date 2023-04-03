@@ -568,11 +568,11 @@ struct Page *swap_alloc(Pde *pgdir, u_int asid) {
 	if (LIST_EMPTY(&page_free_swapable_list)) {
 		/* Your Code Here (1/3) */
 		// swap 0x3900000 out and return it
-		char *da = disk_alloc();
+		u_char *da = disk_alloc();
 		struct Page *pp = pa2page(0x3900000);
 		struct Page *outpp = pa2page(PADDR(da));
 		swap_out_flush_page_table(pgdir, asid, pp, outpp);
-		memcpy(page2kva(pp), da, BY2PG);
+		memcpy((void*)page2kva(pp), da, BY2PG);
 		LIST_INSERT_HEAD(&page_free_swapable_list, pp, pp_link);
 	}
 
@@ -602,7 +602,6 @@ static int is_swapped(Pde *pgdir, u_long va) {
 
 static int go_fuck_swap_pte(Pde *pgdir, u_long va, Pte **ppte) {
 	Pde *pgdir_entryp;
-	struct Page *pp;
 	pgdir_entryp = pgdir + PDX(va);
 	if(((*pgdir_entryp) & PTE_V) == 0) {
 		return 1;
