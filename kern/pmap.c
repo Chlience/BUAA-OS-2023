@@ -588,7 +588,6 @@ struct Page *swap_alloc(Pde *pgdir, u_int asid) {
 static int is_swapped(Pde *pgdir, u_long va) {
 	/* Your Code Here (2/3) */
 	Pde *pgdir_entryp;
-	struct Page *pp;
 	pgdir_entryp = pgdir + PDX(va);
 	if(((*pgdir_entryp) & PTE_V) == 0) {
 		return 0;
@@ -601,7 +600,7 @@ static int is_swapped(Pde *pgdir, u_long va) {
 	return 0;
 }
 
-static int swap_pte(Pde *pgdir, u_long va, struct **Pte ppte) {
+static int swap_pte(Pde *pgdir, u_long va, struct Pte **ppte) {
 	/* Your Code Here (2/3) */
 	Pde *pgdir_entryp;
 	struct Page *pp;
@@ -621,7 +620,6 @@ static int swap_pte(Pde *pgdir, u_long va, struct **Pte ppte) {
 void swap_in_flush_page_table(Pde *pgdir, u_int asid, struct Page *pp, struct Page *outpp) {
 	Pde *pgdir_entryp;
 	u_long i, j;
-	u_long va;
 	for(i = 0; i < 1024; ++ i) {
 		pgdir_entryp = pgdir + i;
 		if ((*pgdir_entryp & PTE_V) == 0) {
@@ -640,7 +638,6 @@ void swap_in_flush_page_table(Pde *pgdir, u_int asid, struct Page *pp, struct Pa
 			}
 		}
 	}
-	return 0;
 }
 
 static void swap(Pde *pgdir, u_int asid, u_long va) {
