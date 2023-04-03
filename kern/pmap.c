@@ -208,6 +208,29 @@ static int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte) {
 	*ppte = KADDR((u_long)pte);								// 二级页表虚拟地址
 	return 0;
 }
+u_int page_perm_stat(Pde *pgdir, struct Page *pp, u_int perm_mask) {
+	Pde *pgdir_entryp;
+	int i, j;
+	u_int sum = 0;
+	for(i = 0; i < 1024; ++ i) {
+		pgdir_entryp = pgdir + i; // 一级页表项
+		if((*pgdir_entryp) & PTE_V == 0) {
+			continue;
+		}
+		for(j = 0; j < 1024; ++ j) {
+			Pte *pte_p = (Pte*)PTE_ADDR(*pgdir_entryp) + j; // 二级页表项物理地址
+			Pte *pte = KADDR((u_long)pte_p); // 二级页表项虚拟地址
+			if(*pte & PTE_V) {
+				u_long ppn = PPN(*pte);
+				u_int ptr_perm = (*ppe) & 0xfff;
+				if(ppn == page2ppn(pp) && ((perm_mask & ptr_perm) & perm_mask) == perm_mask) {
+					sum++;
+				}
+			}
+		}
+	}
+	return sum;
+}
 
 /* Overview:
  *   Map the physical page 'pp' at virtual address 'va'. The permission (the low 12 bits) of the
