@@ -541,7 +541,6 @@ void swap_init() {
 void swap_out_flush_page_table(Pde *pgdir, u_int asid, struct Page *pp, struct Page *outpp) {
 	Pde *pgdir_entryp;
 	u_long i, j;
-	u_long va;
 	for(i = 0; i < 1024; ++ i) {
 		pgdir_entryp = pgdir + i;
 		if ((*pgdir_entryp & PTE_V) == 0) {
@@ -569,11 +568,12 @@ struct Page *swap_alloc(Pde *pgdir, u_int asid) {
 	if (LIST_EMPTY(&page_free_swapable_list)) {
 		/* Your Code Here (1/3) */
 		// swap 0x3900000 out and return it
+		char *da = disk_alloc();
 		struct Page *pp = pa2page(0x3900000);
-		u_char *da = disk_alloc();
-		swap_out_flush_page_table(pgdir, asid, pp, pa2page(va2pa(da)));
-		memcpy(KADDR(swap_page_pa), da, BY2PG);
-		LIST_INSERT_HEAD(pp, pp_link);
+		struct Page *outpp = pa2page(PADDR(da));
+		swap_out_flush_page_table(pgdir, asid, pp, outpp);
+		memcpy(page2kva(pp), da, BY2PG);
+		LIST_INSERT_HEAD(&page_free_swapable_list, pp, pp_link);
 	}
 
 	// Step 2: Get a free page and clear it
