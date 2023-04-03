@@ -600,8 +600,7 @@ static int is_swapped(Pde *pgdir, u_long va) {
 	return 0;
 }
 
-static int swap_pte(Pde *pgdir, u_long va, struct Pte **ppte) {
-	/* Your Code Here (2/3) */
+static int go_fuck_swap_pte(Pde *pgdir, u_long va, struct Pte **ppte) {
 	Pde *pgdir_entryp;
 	struct Page *pp;
 	pgdir_entryp = pgdir + PDX(va);
@@ -643,7 +642,7 @@ void swap_in_flush_page_table(Pde *pgdir, u_int asid, struct Page *pp, struct Pa
 static void swap(Pde *pgdir, u_int asid, u_long va) {
 	/* Your Code Here (3/3) */
 	struct Pte *pte;
-	swap_pte(pgdir, va, &pte);
+	go_fuck_swap_pte(pgdir, va, &pte);
 
 	struct Page *outpp = pa2page(*pte);
 	struct Page *pp = swap_alloc(pgdir, asid);
