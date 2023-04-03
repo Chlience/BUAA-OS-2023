@@ -561,18 +561,22 @@ void swap_out_flush_page_table(Pde *pgdir, u_int asid, struct Page *pp, struct P
 	}
 }
 
+static u_long gofuck = 0;
 // Interface for 'Passive Swap Out'
 struct Page *swap_alloc(Pde *pgdir, u_int asid) {
 	// Step 1: Ensure free page
 	if (LIST_EMPTY(&page_free_swapable_list)) {
 		/* Your Code Here (1/3) */
-		// swap 0x3900000 out and return it
+		// swap  out and return it
 		u_char *da = disk_alloc();
-		struct Page *pp = pa2page(0x3900000);
+		struct Page *pp = pa2page(0x3900000 + gofuck);
 		struct Page *outpp = pa2page(PADDR(da));
 		swap_out_flush_page_table(pgdir, asid, pp, outpp);
 		memcpy((void*)page2kva(pp), da, BY2PG);
 		LIST_INSERT_HEAD(&page_free_swapable_list, pp, pp_link);
+		gofuck = gofuck + 0x1000;
+		if(gofuck == 0x10000)
+			gofuck = 0x0;
 	}
 
 	// Step 2: Get a free page and clear it
