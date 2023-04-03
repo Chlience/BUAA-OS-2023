@@ -556,6 +556,18 @@ struct Page *swap_alloc(Pde *pgdir, u_int asid) {
 // Interfaces for 'Active Swap In'
 static int is_swapped(Pde *pgdir, u_long va) {
 	/* Your Code Here (2/3) */
+	Pde *pgdir_entryp;
+	struct Page *pp;
+	pgdir_entryp = pgdir + PDX(va);
+	if(((*pgdir_entryp) & PTE_V) == 0) {
+		return 0;
+	}
+	Pte *pte_p = (Pte*)PTE_ADDR(*pgdir_entryp) + PTX(va);
+	Pte *pte = KADDR((u_long)pte_p);
+	if ((*pte) & PTE_SWP) {
+		return 1;
+	}
+	return 0;
 }
 
 static void swap(Pde *pgdir, u_int asid, u_long va) {
