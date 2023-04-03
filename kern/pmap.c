@@ -570,6 +570,7 @@ struct Page *swap_alloc(Pde *pgdir, u_int asid) {
 		// swap  out and return it
 		u_char *da = disk_alloc();
 		struct Page *pp = pa2page(0x3900000 + gofuck);
+		printk("alloc swap addr = %lu\n",0x3900000 + gofuck);
 		struct Page *outpp = pa2page(PADDR(da));
 		swap_out_flush_page_table(pgdir, asid, pp, outpp);
 		memcpy((void*)page2kva(pp), da, BY2PG);
