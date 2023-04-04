@@ -41,8 +41,8 @@ struct Env {
 
 LIST_HEAD(Env_list, Env);
 TAILQ_HEAD(Env_sched_list, Env);
-extern struct Env *curenv;		     // the current env
-extern struct Env_sched_list env_sched_list; // runnable env list
+extern struct Env *curenv;		     			// the current env
+extern struct Env_sched_list env_sched_list;	// runnable env list
 
 void env_init(void);
 int env_alloc(struct Env **e, u_int parent_id);
