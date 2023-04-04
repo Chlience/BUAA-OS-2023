@@ -198,7 +198,7 @@ static int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte) {
 		if(ret != 0) {
 			return ret;
 		}
-		(*pgdir_entryp) = page2pa(pp) | PTE_V;	// 页表项保存真实地址
+		(*pgdir_entryp) = page2pa(pp) | PTE_D | PTE_V;	// 页表项保存真实地址
 		pp->pp_ref++;
 	}
 
