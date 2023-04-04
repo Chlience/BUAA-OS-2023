@@ -17,6 +17,13 @@ LEAF(kclock_init)
 	 * Reference: http://gavare.se/gxemul/gxemul-stable/doc/experiments.html#expdevices
 	 */
 	/* Exercise 3.11: Your code here. */
+	/* Write 200 to KSEG1 | DEV_RTC_ADDRESS | DEV_RTC_HZ */
+	/**
+	* Read: Get the current timer interrupt frequency.
+	* Write: Set the timer interrupt frequency. (Writing 0 disables the timer.)
+	**/
+	li		t1, KSEG1 | DEV_RTC_ADDRESS | DEV_RTC_HZ
+	sw		t0, 0(t1)
 
 	jr      ra
 END(kclock_init)
