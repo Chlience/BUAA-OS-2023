@@ -288,7 +288,7 @@ int env_alloc(struct Env **new, u_int parent_id) {
 	/* Step 5: Remove the new Env from env_free_list. */
 	/* Exercise 3.4: Your code here. (4/4) */
 	LIST_REMOVE(e, env_link);
-	
+
 	*new = e;
 	return 0;
 }
@@ -347,7 +347,10 @@ static void load_icode(struct Env *e, const void *binary, size_t size) {
 	 * As a loader, we just care about loadable segments, so parse only program headers here.
 	 */
 	size_t ph_off;
+	/* 遍历 elf 文件的每个 program header table entry */
 	ELF_FOREACH_PHDR_OFF (ph_off, ehdr) {
+		/* 注意到这里 ph_off 在前面的宏中被修改为每个 PHTE 到程序头的 offset */
+		/* 令 ph 为当前 program header table entry 的地址 */
 		Elf32_Phdr *ph = (Elf32_Phdr *)(binary + ph_off);
 		if (ph->p_type == PT_LOAD) {
 			// 'elf_load_seg' is defined in lib/elfloader.c
@@ -359,7 +362,8 @@ static void load_icode(struct Env *e, const void *binary, size_t size) {
 
 	/* Step 3: Set 'e->env_tf.cp0_epc' to 'ehdr->e_entry'. */
 	/* Exercise 3.6: Your code here. */
-
+	/* 设置程序入口地址 */
+	e->env_tf.cp0_epc = ehdr->e_entry;
 }
 
 /* Overview:
@@ -374,13 +378,17 @@ struct Env *env_create(const void *binary, size_t size, int priority) {
 	struct Env *e;
 	/* Step 1: Use 'env_alloc' to alloc a new env, with 0 as 'parent_id'. */
 	/* Exercise 3.7: Your code here. (1/3) */
+	panic_on(env_alloc(&e, 0));
 
 	/* Step 2: Assign the 'priority' to 'e' and mark its 'env_status' as runnable. */
 	/* Exercise 3.7: Your code here. (2/3) */
+	e->env_pri = priority;
+	e->env_status = ENV_RUNNABLE;
 
 	/* Step 3: Use 'load_icode' to load the image from 'binary', and insert 'e' into
 	 * 'env_sched_list' using 'TAILQ_INSERT_HEAD'. */
 	/* Exercise 3.7: Your code here. (3/3) */
+	load_icode(e, binary, size);
 
 	return e;
 }
@@ -499,6 +507,7 @@ void env_run(struct Env *e) {
 
 	/* Step 3: Change 'cur_pgdir' to 'curenv->env_pgdir', switching to its address space. */
 	/* Exercise 3.8: Your code here. (1/2) */
+	cur_pgdir = curenv->env_pgdir;
 
 	/* Step 4: Use 'env_pop_tf' to restore the curenv's saved context (registers) and return/go
 	 * to user mode.
@@ -509,7 +518,7 @@ void env_run(struct Env *e) {
 	 *    returning to the kernel caller, making 'env_run' a 'noreturn' function as well.
 	 */
 	/* Exercise 3.8: Your code here. (2/2) */
-
+	env_pop_tf(&curenv->env_tf, curenv->env_asid);
 }
 
 void env_check() {
