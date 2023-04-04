@@ -382,7 +382,7 @@ struct Env *env_create(const void *binary, size_t size, int priority) {
 
 	/* Step 2: Assign the 'priority' to 'e' and mark its 'env_status' as runnable. */
 	/* Exercise 3.7: Your code here. (2/3) */
-	e->env_runs = priority;
+	e->env_pri = priority;
 	e->env_status = ENV_RUNNABLE;
 
 	/* Step 3: Use 'load_icode' to load the image from 'binary', and insert 'e' into
