@@ -79,9 +79,13 @@ static void swap_test() {
 	for (int i = 0; i < SWAP_NPAGE; i++) {
 		u_long va = TEST_VA_START + i * BY2PG;
 		struct Page *pp = swap_alloc(cur_pgdir, 0);
+		// printk("page addr: %lx\n", page2pa(pp));
 		assert(pp != NULL);
 		assert(page_insert(cur_pgdir, 0, pp, va, PTE_D) == 0);
 		strcpy(kuseg(va), s[i]);
+		printk("pp addr: %lx\n", page2pa(pp));
+		printk("va addr: %lx\n", va);
+		printk("va contant: %s\n", va);
 	}
 	printk("1x Page Used\n");
 
@@ -89,15 +93,22 @@ static void swap_test() {
 	for (int i = SWAP_NPAGE; i < 2 * SWAP_NPAGE; i++) {
 		u_long va = TEST_VA_START + i * BY2PG;
 		struct Page *pp = swap_alloc(cur_pgdir, 0);
+		// printk("page addr: %lx\n", page2pa(pp));
 		assert(pp != NULL);
 		assert(page_insert(cur_pgdir, 0, pp, va, PTE_D) == 0);
 		strcpy(kuseg(va), s[i]);
+		printk("pp addr: %lx\n", page2pa(pp));
+		printk("va addr: %lx\n", va);
+		printk("va contant: %s\n", va);
 	}
 
 	printk("2x Page Used\n");
+	
 
 	for (int i = 0; i < 2 * SWAP_NPAGE; i++) {
 		u_long va = TEST_VA_START + i * BY2PG;
+		// printk("va addr: %lx\n", va);
+		// printk("va contant: %s\n", va);
 		ensure(strcmp(kuseg(va), s[i]) == 0, "Content[%d] Wrong!", i);
 	}
 
