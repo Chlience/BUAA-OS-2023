@@ -20,7 +20,7 @@ FEXPORT(ret_from_exception)
 	jr      k0
 	rfe
 .set reorder
-
+/* 如果是时钟中断，处理完异常后发送信息关闭外设时钟中断高位 */
 NESTED(handle_int, TF_SIZE, zero)
 	mfc0    t0, CP0_CAUSE
 	mfc0    t2, CP0_STATUS
@@ -29,8 +29,19 @@ NESTED(handle_int, TF_SIZE, zero)
 	bnez    t1, timer_irq
 	// TODO: handle other irqs
 timer_irq:
+	/**
+	 * DEV_RTC_INTERRUPT_ACK:
+	 * offset: 0x0110
+	 * Read or Write: Acknowledge one timer interrupt.
+	 * (Note that if multiple interrupts are pending,
+	 * only one is acknowledged.)
+	 * 确认一个中断
+	 * see https://gavare.se/gxemul/gxemul-stable/doc/experiments.html#expdevices
+	*/
 	sw      zero, (KSEG1 | DEV_RTC_ADDRESS | DEV_RTC_INTERRUPT_ACK)
+	/* 给 schedule 传参 yield = 0 */
 	li      a0, 0
+	/* 返回调度程序 */
 	j       schedule
 END(handle_int)
 
