@@ -313,9 +313,9 @@ static int load_icode_mapper(void *data, u_long va, size_t offset, u_int perm, c
 
 	/* Step 1: Allocate a page with 'page_alloc'. */
 	/* Exercise 3.5: Your code here. (1/2) */
-	int ret = page_alloc(&p);
-	if(ret != 0) {
-		return ret;
+	r = page_alloc(&p);
+	if(r != 0) {
+		return r;
 	}
 
 	/* Step 2: If 'src' is not NULL, copy the 'len' bytes started at 'src' into 'offset' at this
@@ -324,7 +324,7 @@ static int load_icode_mapper(void *data, u_long va, size_t offset, u_int perm, c
 	if (src != NULL) {
 		/* Exercise 3.5: Your code here. (2/2) */
 		/* va 到页头的距离为 offset */
-		memcpy(page2kva(p) + offset, src, len);
+		memcpy((void*)page2kva(p) + offset, src, len);
 	}
 
 	/* Step 3: Insert 'p' into 'env->env_pgdir' at 'va' with 'perm'. */
