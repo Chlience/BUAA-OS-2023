@@ -33,8 +33,12 @@ int elf_load_seg(Elf32_Phdr *ph, const void *bin, elf_mapper_t map_page, void *d
 
 	int r;
 	size_t i;
+
+	/* 加载前端未对齐部分 */
 	u_long offset = va - ROUNDDOWN(va, BY2PG);
+	/* offset: va 到页头的距离 */
 	if (offset != 0) {
+		/* map_page 为回调函数 */
 		if ((r = map_page(data, va, offset, perm, bin, MIN(bin_size, BY2PG - offset))) !=
 		    0) {
 			return r;
@@ -42,13 +46,22 @@ int elf_load_seg(Elf32_Phdr *ph, const void *bin, elf_mapper_t map_page, void *d
 	}
 
 	/* Step 1: load all content of bin into memory. */
+	/** 
+	 * 加载剩余部分
+	 * 如果 offset == 0，则说明已然对齐，从头开始
+	 * 如果 offset != 0，则说明未对齐，从未对齐部分末尾 MIN(bin_size, BY2PG - offset) 开始
+	 * */
 	for (i = offset ? MIN(bin_size, BY2PG - offset) : 0; i < bin_size; i += BY2PG) {
+		/* 注意每次 copy 的长度不超过 BY2PG */
 		if ((r = map_page(data, va + i, 0, perm, bin + i, MIN(bin_size - i, BY2PG))) != 0) {
 			return r;
 		}
 	}
 
 	/* Step 2: alloc pages to reach `sgsize` when `bin_size` < `sgsize`. */
+	/** 
+	 * 将 seg 剩余部分用零填充
+	 * */
 	while (i < sgsize) {
 		if ((r = map_page(data, va + i, 0, perm, NULL, MIN(bin_size - i, BY2PG))) != 0) {
 			return r;
