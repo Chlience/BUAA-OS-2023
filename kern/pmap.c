@@ -141,7 +141,7 @@ int page_alloc(struct Page **new) {
 	/* Step 2: Initialize this page with zero.
 	 * Hint: use `memset`. */
 	/* Exercise 2.4: Your code here. (2/2) */
-	memset(page2kva(pp), 0, BY2PG);
+	memset((void*)page2kva(pp), 0, BY2PG);
 
 	*new = pp;
 	return 0;
@@ -205,7 +205,7 @@ static int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte) {
 	/* Step 3: Assign the kernel virtual address of the page table entry to '*ppte'. */
 	/* Exercise 2.6: Your code here. (3/3) */
 	Pte *pte = (Pte*)PTE_ADDR(*pgdir_entryp) + PTX(va);		// 二级页表真实地址
-	*ppte = KADDR((u_long)pte);								// 二级页表虚拟地址
+	*ppte = (Pte*)KADDR((u_long)pte);						// 二级页表虚拟地址
 	return 0;
 }
 

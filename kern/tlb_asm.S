@@ -41,7 +41,7 @@ NESTED(do_tlb_refill, 0, zero)
 	jal     _do_tlb_refill			/* 调用重填 */
 	lw      ra, tlb_refill_ra		/* 取 ra */
 	mtc0    v0, CP0_ENTRYLO0		/* Page 物理地址 */
-	/* See <IDT R30xx Family Software Reference Manual> Chapter 6-8
+	/* See <IDT R30xx Family Software Reference Manual> Chapter 6-8 */
 	nop
 	/* Hint: use 'tlbwr' to write CP0.EntryHi/Lo into a random tlb entry. */
 	/* Exercise 2.10: Your code here. */
