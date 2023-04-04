@@ -253,7 +253,6 @@ int env_alloc(struct Env **new, u_int parent_id) {
 		return -E_NO_FREE_ENV;
 	}
 	e = LIST_FIRST(&env_free_list);
-	LIST_REMOVE(e, env_link);
 
 	/* Step 2: Call a 'env_setup_vm' to initialize the user address space for this new Env. */
 	/* Exercise 3.4: Your code here. (2/4) */
@@ -271,7 +270,7 @@ int env_alloc(struct Env **new, u_int parent_id) {
 	 *   Use 'mkenvid' to allocate a free envid.
 	 */
 	e->env_user_tlb_mod_entry = 0; // for lab4
-	e->env_runs = 0;	       // for lab6
+	e->env_runs = 0;	           // for lab6
 	/* Exercise 3.4: Your code here. (3/4) */
 	r = asid_alloc(&(e->env_asid));
 	if(r != 0) {
@@ -288,7 +287,8 @@ int env_alloc(struct Env **new, u_int parent_id) {
 
 	/* Step 5: Remove the new Env from env_free_list. */
 	/* Exercise 3.4: Your code here. (4/4) */
-
+	LIST_REMOVE(e, env_link);
+	
 	*new = e;
 	return 0;
 }
@@ -313,13 +313,18 @@ static int load_icode_mapper(void *data, u_long va, size_t offset, u_int perm, c
 
 	/* Step 1: Allocate a page with 'page_alloc'. */
 	/* Exercise 3.5: Your code here. (1/2) */
+	int ret = page_alloc(&p);
+	if(ret != 0) {
+		return ret;
+	}
 
 	/* Step 2: If 'src' is not NULL, copy the 'len' bytes started at 'src' into 'offset' at this
 	 * page. */
 	// Hint: You may want to use 'memcpy'.
 	if (src != NULL) {
 		/* Exercise 3.5: Your code here. (2/2) */
-
+		/* va 到页头的距离为 offset */
+		memcpy(page2kva(p) + offset, src, len);
 	}
 
 	/* Step 3: Insert 'p' into 'env->env_pgdir' at 'va' with 'perm'. */
