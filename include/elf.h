@@ -125,6 +125,7 @@ typedef struct {
 
 /* Utils provided by our ELF loader. */
 
+/* 返回值是 int 的回调函数 */
 typedef int (*elf_mapper_t)(void *data, u_long va, size_t offset, u_int perm, const void *src,
 			    size_t len);
 

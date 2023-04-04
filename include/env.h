@@ -18,13 +18,13 @@
 struct Env {
 	struct Trapframe env_tf;  // Saved registers
 	LIST_ENTRY(Env) env_link; // Free list
-	u_int env_id;		  // Unique environment identifier
-	u_int env_asid;		  // ASID
-	u_int env_parent_id;	  // env_id of this env's parent
-	u_int env_status;	  // Status of the environment
-	Pde *env_pgdir;		  // Kernel virtual address of page dir
+	u_int env_id;			// Unique environment identifier
+	u_int env_asid;			// ASID
+	u_int env_parent_id;	// env_id of this env's parent
+	u_int env_status;		// Status of the environment
+	Pde *env_pgdir;			// Kernel virtual address of page dir
 	TAILQ_ENTRY(Env) env_sched_link;
-	u_int env_pri;
+	u_int env_pri;			// priority
 	// Lab 4 IPC
 	u_int env_ipc_value;   // data value sent to us
 	u_int env_ipc_from;    // envid of the sender

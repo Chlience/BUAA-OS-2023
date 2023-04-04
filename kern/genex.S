@@ -13,7 +13,7 @@ END(handle_\exception)
 .text
 
 FEXPORT(ret_from_exception)
-	RESTORE_SOME
+	RESTORE_SOME /* 从栈中读取寄存器值 */
 	lw      k0, TF_EPC(sp)
 	lw      sp, TF_REG29(sp) /* Deallocate stack */
 .set noreorder
