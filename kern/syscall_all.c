@@ -488,9 +488,11 @@ void do_syscall(struct Trapframe *tf) {
 
 	/* Step 1: Add the EPC in 'tf' by a word (size of an instruction). */
 	/* Exercise 4.2: Your code here. (1/4) */
+	tf->cp0_epc += 4;
 
 	/* Step 2: Use 'sysno' to get 'func' from 'syscall_table'. */
 	/* Exercise 4.2: Your code here. (2/4) */
+	func = syscall_table[sysno];
 
 	/* Step 3: First 3 args are stored at $a1, $a2, $a3. */
 	u_int arg1 = tf->regs[5];
@@ -500,9 +502,11 @@ void do_syscall(struct Trapframe *tf) {
 	/* Step 4: Last 2 args are stored in stack at [$sp + 16 bytes], [$sp + 20 bytes] */
 	u_int arg4, arg5;
 	/* Exercise 4.2: Your code here. (3/4) */
+	arg4 = *(u_int*)(tf->regs[29] + 16);
+	arg5 = *(u_int*)(tf->regs[29] + 20);
 
 	/* Step 5: Invoke 'func' with retrieved arguments and store its return value to $v0 in 'tf'.
 	 */
 	/* Exercise 4.2: Your code here. (4/4) */
-
+	tf->regs[2] = func(arg1, arg2, arg3, arg4, arg5);
 }
