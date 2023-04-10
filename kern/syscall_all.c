@@ -183,16 +183,30 @@ int sys_mem_map(u_int srcid, u_int srcva, u_int dstid, u_int dstva, u_int perm) 
 	/* Step 1: Check if 'srcva' and 'dstva' are legal user virtual addresses using
 	 * 'is_illegal_va'. */
 	/* Exercise 4.5: Your code here. (1/4) */
+	if (is_illegal_va(srcva) || is_illegal_va(dstva)) {
+		return -E_INVAL;
+	}
 
 	/* Step 2: Convert the 'srcid' to its corresponding 'struct Env *' using 'envid2env'. */
 	/* Exercise 4.5: Your code here. (2/4) */
+	if (envid2env(srcid, &srcenv, 1)) {
+		return -E_BAD_ENV;
+	}
 
 	/* Step 3: Convert the 'dstid' to its corresponding 'struct Env *' using 'envid2env'. */
 	/* Exercise 4.5: Your code here. (3/4) */
+	if (envid2env(dstid, &dstenv, 1)) {
+		return -E_BAD_ENV;
+	}
 
 	/* Step 4: Find the physical page mapped at 'srcva' in the address space of 'srcid'. */
 	/* Return -E_INVAL if 'srcva' is not mapped. */
 	/* Exercise 4.5: Your code here. (4/4) */
+	Pte	*pte;
+	pp = page_lookup(srcenv->env_pgdir, srcva, &pte);
+	if (pp == NULL) {
+		return -E_INVAL;
+	}
 
 	/* Step 5: Map the physical page at 'dstva' in the address space of 'dstid'. */
 	return page_insert(dstenv->env_pgdir, dstenv->env_asid, pp, dstva, perm);
