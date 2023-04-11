@@ -119,7 +119,11 @@ int envid2env(u_int envid, struct Env **penv, int checkperm) {
 	 */
 	/* Exercise 4.3: Your code here. (1/2) */
 	if (envid == 0) {
-		e = curenv;
+		// env->env_id != 0
+		// envid == 0 时查询 curenv
+		// 无需检查，直接返回
+		*penv = curenv;
+		return 0;
 	} else {
 		e = &envs[ENVX(envid)];
 	}
