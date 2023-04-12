@@ -21,22 +21,34 @@ static void __attribute__((noreturn)) cow_entry(struct Trapframe *tf) {
 	/* Hint: Use 'vpt' and 'VPN' to find the page table entry. If the 'perm' doesn't have
 	 * 'PTE_COW', launch a 'user_panic'. */
 	/* Exercise 4.13: Your code here. (1/6) */
+	Pte *pte;
+	page_lookup(vpt, va, &pte);
+	perm = *pte & 0xfff;
+	if (!(perm & PTE_COW)) {
+		user_panic("Error when cow entry.");
+	}
 
 	/* Step 2: Remove 'PTE_COW' from the 'perm', and add 'PTE_D' to it. */
 	/* Exercise 4.13: Your code here. (2/6) */
+	perm &= ~PTE_COW;
+	perm |= PTE_D;
 
 	/* Step 3: Allocate a new page at 'UCOW'. */
 	/* Exercise 4.13: Your code here. (3/6) */
+	syscall_mem_alloc(0, UCOW, perm);
 
 	/* Step 4: Copy the content of the faulting page at 'va' to 'UCOW'. */
 	/* Hint: 'va' may not be aligned to a page! */
 	/* Exercise 4.13: Your code here. (4/6) */
+	memcpy(ROUNDDOWN(va, BY2PG), UCOW, BY2PG);
 
 	// Step 5: Map the page at 'UCOW' to 'va' with the new 'perm'.
 	/* Exercise 4.13: Your code here. (5/6) */
+	syscall_mem_map(0, UCOW, 0, va, perm);
 
 	// Step 6: Unmap the page at 'UCOW'.
 	/* Exercise 4.13: Your code here. (6/6) */
+	syscall_mem_unmap(0, UCOW);
 
 	// Step 7: Return to the faulting routine.
 	int r = syscall_set_trapframe(0, tf);
