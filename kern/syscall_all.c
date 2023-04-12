@@ -96,9 +96,11 @@ int sys_set_tlb_mod_entry(u_int envid, u_int func) {
 
 	/* Step 1: Convert the envid to its corresponding 'struct Env *' using 'envid2env'. */
 	/* Exercise 4.12: Your code here. (1/2) */
+	try(envid2env(envid, &env, 1));
 
 	/* Step 2: Set its 'env_user_tlb_mod_entry' to 'func'. */
 	/* Exercise 4.12: Your code here. (2/2) */
+	env->env_user_tlb_mod_entry = func;
 
 	return 0;
 }
