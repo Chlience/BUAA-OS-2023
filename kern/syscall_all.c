@@ -297,12 +297,21 @@ int sys_set_env_status(u_int envid, u_int status) {
 
 	/* Step 1: Check if 'status' is valid. */
 	/* Exercise 4.14: Your code here. (1/3) */
+	if ((status != ENV_RUNNABLE) && (status != ENV_NOT_RUNNABLE)) {
+		return -E_INVAL;
+	}
 
 	/* Step 2: Convert the envid to its corresponding 'struct Env *' using 'envid2env'. */
 	/* Exercise 4.14: Your code here. (2/3) */
+	try(envid2env(envid, &env, 1));
 
 	/* Step 4: Update 'env_sched_list' if the 'env_status' of 'env' is being changed. */
 	/* Exercise 4.14: Your code here. (3/3) */
+	if ((env->env_status == ENV_RUNNABLE) && (status == ENV_NOT_RUNNABLE)) {
+		TAILQ_REMOVE(&env_sched_list, env, env_sched_link);
+	} else if ((env->env_status == ENV_NOT_RUNNABLE) && (status == ENV_RUNNABLE)) {
+		TAILQ_INSERT_TAIL(&env_sched_list, env, env_sched_link);
+	}
 
 	/* Step 5: Set the 'env_status' of 'env'. */
 	env->env_status = status;
