@@ -99,10 +99,10 @@ static void duppage(u_int envid, u_int vpn) {
 	if ((perm & PTE_D) && !(perm & PTE_LIBRARY)) {
 		perm &= ~PTE_D;
 		perm |= PTE_COW;
-		syscall_mem_map(0, va, envid, va, perm);
-		syscall_mem_map(0, va, 0, va, perm);
+		syscall_mem_map(0, (void *)va, envid, (void *)va, perm);
+		syscall_mem_map(0, (void *)va, 0, (void *)va, perm);
 	} else {
-		syscall_mem_map(0, va, envid, va, perm);
+		syscall_mem_map(0, (void *)va, envid, (void *)va, perm);
 	}
 }
 
