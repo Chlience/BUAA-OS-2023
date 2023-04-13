@@ -38,11 +38,11 @@ static void __attribute__((noreturn)) cow_entry(struct Trapframe *tf) {
 	/* Step 4: Copy the content of the faulting page at 'va' to 'UCOW'. */
 	/* Hint: 'va' may not be aligned to a page! */
 	/* Exercise 4.13: Your code here. (4/6) */
-	memcpy((void *)ROUNDDOWN(va, BY2PG), (void *)UCOW, BY2PG);
+	memcpy((void *)UCOW, (void *)ROUNDDOWN(va, BY2PG), BY2PG);
 
 	// Step 5: Map the page at 'UCOW' to 'va' with the new 'perm'.
 	/* Exercise 4.13: Your code here. (5/6) */
-	syscall_mem_map(0, (void *)UCOW, 0, (void *)va, perm);
+	syscall_mem_map(0, (void *)UCOW, 0, (void *)ROUNDDOWN(va, BY2PG), perm);
 
 	// Step 6: Unmap the page at 'UCOW'.
 	/* Exercise 4.13: Your code here. (6/6) */
@@ -96,7 +96,7 @@ static void duppage(u_int envid, u_int vpn) {
 	 */
 	/* Exercise 4.10: Your code here. (2/2) */
 	addr = vpn * BY2PG;
-	if ((perm & PTE_D) && !(perm & PTE_LIBRARY)) {
+	if ((perm & PTE_D) && !(perm & PTE_LIBRARY) && !(perm & PTE_COW)) {
 		perm &= ~PTE_D;
 		perm |= PTE_COW;
 		syscall_mem_map(0, (void *)addr, envid, (void *)addr, perm);
@@ -142,7 +142,7 @@ int fork(void) {
 	u_int j;
 	for (i = 0; i < USTACKTOP; i += PDMAP) {
 		if (*(vpd + PDX(i)) & PTE_V) {
-			for (j = 0; j < PDMAP; j += BY2PG) {
+			for (j = 0; (j < PDMAP) && (i + j < USTACKTOP); j += BY2PG) { // 防止未对齐
 				if(*(vpt + VPN(i + j)) & PTE_V) {
 					duppage(child, VPN(i + j));
 				}
