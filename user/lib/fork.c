@@ -83,9 +83,7 @@ static void duppage(u_int envid, u_int vpn) {
 	/* Step 1: Get the permission of the page. */
 	/* Hint: Use 'vpt' to find the page table entry. */
 	/* Exercise 4.10: Your code here. (1/2) */
-	Pte *pte;
-	u_long va = vpn * BY2PG;
-	struct Page *page = page_lookup(vpd, va, &pte);
+	perm = *(vpt + vpn) & 0xfff;
 	/**
 	 * vpt: virtual page table
 	 * vpd: vitrual page dictionary
@@ -97,12 +95,12 @@ static void duppage(u_int envid, u_int vpn) {
 	/* Hint: The page should be first mapped to the child before remapped in the parent. (Why?)
 	 */
 	/* Exercise 4.10: Your code here. (2/2) */
-	perm = (*pte) & 0xfff;
+	u_long va = vpn * BY2PG;
 	if ((perm & PTE_D) && !(perm & PTE_LIBRARY)) {
 		perm &= ~PTE_D;
 		perm |= PTE_COW;
-		syscall_mem_map(0, va, 0, va, perm);
 		syscall_mem_map(0, va, envid, va, perm);
+		syscall_mem_map(0, va, 0, va, perm);
 	} else {
 		syscall_mem_map(0, va, envid, va, perm);
 	}
