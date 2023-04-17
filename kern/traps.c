@@ -8,6 +8,7 @@ extern void handle_tlb(void);
 extern void handle_sys(void);
 extern void handle_mod(void);
 extern void handle_reserved(void);
+extern void handle_ov(void);
 
 void (*exception_handlers[32])(void) = {
     [0 ... 31] = handle_reserved,
