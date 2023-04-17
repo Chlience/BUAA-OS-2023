@@ -43,8 +43,7 @@ void do_reserved(struct Trapframe *tf) {
 void do_ov(struct Trapframe *tf) {
     Pte *pte;
     u_int va = tf->cp0_epc;
-    page_lookup(curenv, va, &pte);
-    printk("0x%lx\n", *pte);
+    page_lookup(cur_pgdir, va, &pte);
     u_int pa = PTE_ADDR(*pte) | (va & 0xfff);
     u_int *instr = KADDR(pa);
     if (IS_ADD(*instr)) {
