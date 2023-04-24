@@ -470,7 +470,7 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 	int n = 1 << 10;
 	while(head < tail) {
 		for (int envid = 1; envid < n; ++ envid) {
-			e = envid2env(envid);
+			envid2env(envid, &e, 0);
 			if (e->env_status != ENV_NOT_RUNNABLE && e->env_status != ENV_RUNNABLE) {
 				continue;
 			}
