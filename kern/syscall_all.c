@@ -493,6 +493,7 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 		head++;
 	}
 	// printk("ALL OK!\n");
+	printk("%x %x\n", head,tail);
 
 	for (int i = 1; i < tail; ++ i) {
 		e = ee[i];
@@ -500,18 +501,10 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 		e->env_ipc_from = curenv->env_id;
 		e->env_ipc_perm = PTE_V | perm;
 		e->env_ipc_recving = 0;
-
-		/* Step 5: Set the target's status to 'ENV_RUNNABLE' again and insert it to the tail of
-		* 'env_sched_list'. */
-		/* Exercise 4.8: Your code here. (7/8) */
 		e->env_status = ENV_RUNNABLE;
 		TAILQ_INSERT_TAIL(&env_sched_list, (e), env_sched_link);
 
-		/* Step 6: If 'srcva' is not zero, map the page at 'srcva' in 'curenv' to 'e->env_ipc_dstva'
-		* in 'e'. */
-		/* Return -E_INVAL if 'srcva' is not zero and not mapped in 'curenv'. */
 		if (srcva != 0) {
-			/* Exercise 4.8: Your code here. (8/8) */
 			Pte* pte;
 			p = page_lookup(curenv->env_pgdir, srcva, &pte);
 			if (p == NULL) {
