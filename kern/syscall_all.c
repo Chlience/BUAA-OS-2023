@@ -455,6 +455,58 @@ int sys_ipc_try_send(u_int envid, u_int value, u_int srcva, u_int perm) {
 	return 0;
 }
 
+int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
+	struct Env *e;
+	struct Page *p;
+
+	if (srcva != 0 && is_illegal_va(srcva)) {
+		return -E_INVAL;
+	}
+
+	struct Env *ee[20];
+	int head = 0;
+	int tail = 1;
+	ee[0] = curenv;
+	int n = 1 << 10;
+	while(head < tail) {
+		for (int envid = 1; envid < n; ++ envid) {
+			e = envid2env(envid);
+			if (e->env_status != ENV_NOT_RUNNABLE && e->env_status != ENV_RUNNABLE) {
+				continue;
+			}
+			if (e->env_parent_id == ee[head]->env_id) {
+				if (e->env_ipc_recving == 0) {
+					return -E_IPC_NOT_RECV;
+				}
+				ee[tail ++] = e;
+			}
+		}
+	}
+
+	for (int i = 1; i < tail; ++ i) {
+		e = ee[i];
+		e->env_ipc_value = value;
+		e->env_ipc_from = curenv->env_id;
+		e->env_ipc_perm = PTE_V | perm;
+		e->env_ipc_recving = 0;
+		e->env_status = ENV_RUNNABLE;
+		TAILQ_INSERT_TAIL(&env_sched_list, (e), env_sched_link);
+		if (srcva != 0) {
+			Pte* pte;
+			p = page_lookup(curenv->env_pgdir, srcva, &pte);
+			if (p == NULL) {
+				return -E_INVAL;
+			}
+			int ret = page_insert(e->env_pgdir, e->env_asid, p, e->env_ipc_dstva, e->env_ipc_perm);
+			if (ret) {
+				return ret;
+			}
+		}
+	}
+	
+	return 0;
+}
+
 // XXX: kernel does busy waiting here, blocking all envs
 int sys_cgetc(void) {
 	int ch;
