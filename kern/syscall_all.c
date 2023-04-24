@@ -495,7 +495,7 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 	// printk("ALL OK!\n");
 	printk("%x %x\n", head,tail);
 	envid2env(0x2003, &e, 0);
-	printk("%x %x\n", e->env_id);
+	printk("%x %x\n", 0x2003, e->env_id);
 
 	for (int i = 1; i < tail; ++ i) {
 		e = ee[i];
