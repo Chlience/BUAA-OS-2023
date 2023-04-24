@@ -18,11 +18,11 @@ enum {
 	SYS_set_trapframe,
 	SYS_panic,
 	SYS_ipc_try_send,
+	SYS_ipc_try_broadcast,
 	SYS_ipc_recv,
 	SYS_cgetc,
 	SYS_write_dev,
 	SYS_read_dev,
-	SYS_ipc_try_broadcast,
 	MAX_SYSNO,
 };
 
