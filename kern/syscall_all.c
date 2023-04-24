@@ -527,6 +527,7 @@ void *syscall_table[MAX_SYSNO] = {
     [SYS_set_trapframe] = sys_set_trapframe,
     [SYS_panic] = sys_panic,
     [SYS_ipc_try_send] = sys_ipc_try_send,
+	[SYS_ipc_try_broadcast] = sys_ipc_try_broadcast,
     [SYS_ipc_recv] = sys_ipc_recv,
     [SYS_cgetc] = sys_cgetc,
     [SYS_write_dev] = sys_write_dev,
