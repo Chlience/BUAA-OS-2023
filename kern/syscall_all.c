@@ -471,8 +471,10 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 	int n = 1 << 10;
 	while(head < tail) {
 		printk("envid = %d\n", ee[head]->env_id);
-		for (int i = 1; i < n; ++ i) {
+		for (int i = 0; i < n; ++ i) {
+			printk("i = %x\n", i);
 			envid2env(i, &e, 0);
+			
 			if (e->env_id == 0) {
 				continue;
 			}
