@@ -473,7 +473,7 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 		printk("envid = %d\n", ee[head]->env_id);
 		for (int i = 1; i < n; ++ i) {
 			envid2env(i, &e, 0);
-			if (e->envid == 0) {
+			if (e->env_id == 0) {
 				continue;
 			}
 			printk("%x: search envid = %x\n", i, e->env_id);
