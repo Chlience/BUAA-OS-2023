@@ -49,6 +49,7 @@ int env_alloc(struct Env **e, u_int parent_id);
 void env_free(struct Env *);
 struct Env *env_create(const void *binary, size_t size, int priority);
 void env_destroy(struct Env *e);
+struct Env* getEnv(int id);
 
 int envid2env(u_int envid, struct Env **penv, int checkperm);
 void env_run(struct Env *e) __attribute__((noreturn));
