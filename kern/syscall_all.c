@@ -476,14 +476,13 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 			envid2env(i, &e, 0);
 			if (e == NULL) continue;
 			if(e->env_id != 0x800)
-				printk("%x %x\n", i, e->env_id);
+				printk("%x %x %x\n", i, e->env_id, e->parent_id);
 			if (e->env_id == 0) {
 				continue;
 			}
 			if (e->env_status != ENV_NOT_RUNNABLE && e->env_status != ENV_RUNNABLE) {
 				continue;
 			}
-			printk("%x: search envid = %x\n", i, e->env_id);
 			if (e->env_parent_id == ee[head]->env_id) {
 				if (e->env_ipc_recving == 0) {
 					printk("envid = %d not recving!\n", ee[head]->env_id);
