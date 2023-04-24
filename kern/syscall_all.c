@@ -492,6 +492,7 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 		}
 		head++;
 	}
+	printk("ALL OK!\n");
 
 	for (int i = 1; i < tail; ++ i) {
 		e = ee[i];
