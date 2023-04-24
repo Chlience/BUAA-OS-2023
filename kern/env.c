@@ -285,6 +285,7 @@ int env_alloc(struct Env **new, u_int parent_id) {
 	 */
 	e->env_user_tlb_mod_entry = 0; // for lab4
 	e->env_runs = 0;	           // for lab6
+	e->env_gid = 0;
 	/* Exercise 3.4: Your code here. (3/4) */
 	r = asid_alloc(&(e->env_asid));
 	if(r != 0) {
