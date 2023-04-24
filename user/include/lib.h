@@ -68,7 +68,7 @@ int syscall_ipc_recv(void *dstva);
 int syscall_cgetc();
 int syscall_write_dev(void *, u_int, u_int);
 int syscall_read_dev(void *, u_int, u_int);
-int syscall_ipc_broadcast(u_int value, const void *srcva, u_int perm);
+int syscall_ipc_try_broadcast(u_int value, const void *srcva, u_int perm);
 
 
 // ipc.c
@@ -138,7 +138,5 @@ int sync(void);
 #define O_TRUNC 0x0200 /* truncate to zero length */
 #define O_EXCL 0x0400  /* error if already exists */
 #define O_MKDIR 0x0800 /* create directory, not regular file */
-
-void ipc_broadcast(u_int val, void * srcva, u_int perm);
 
 #endif
