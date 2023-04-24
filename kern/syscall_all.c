@@ -532,15 +532,15 @@ int sys_ipc_try_group_send(u_int envid, u_int value, u_int srcva, u_int perm) {
 	 * because the target env is not restricted to 'curenv''s children. */
 	/* Exercise 4.8: Your code here. (5/8) */
 	envid2env(envid, &e, 0);
-	
-	if (e->env_gid != curenv->env_gid) {
-		return -E_IPC_NOT_GROUP;
-	}
 
 	/* Step 3: Check if the target is waiting for a message. */
 	/* Exercise 4.8: Your code here. (6/8) */
 	if (e->env_ipc_recving == 0) {
 		return -E_IPC_NOT_RECV;
+	}
+	
+	if (e->env_gid != curenv->env_gid) {
+		return -E_IPC_NOT_GROUP;
 	}
 
 	/* Step 4: Set the target's ipc fields. */
