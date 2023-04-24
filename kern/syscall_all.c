@@ -471,12 +471,12 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 	int n = 1 << 10;
 	while(head < tail) {
 		printk("envid = %d\n", ee[head]->env_id);
-		for (int envid = 1; envid < n; ++ envid) {
-			envid2env(envid, &e, 0);
+		for (int i = 1; i < n; ++ i) {
+			envid2env(i, &e, 0);
 			if (e->envid == 0) {
 				continue;
 			}
-			printk("%x: search envid = %x\n", envid, e->env_id);
+			printk("%x: search envid = %x\n", i, e->env_id);
 			if (e->env_status != ENV_NOT_RUNNABLE && e->env_status != ENV_RUNNABLE) {
 				continue;
 			}
