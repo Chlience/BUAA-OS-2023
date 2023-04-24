@@ -137,4 +137,7 @@ int sync(void);
 #define O_EXCL 0x0400  /* error if already exists */
 #define O_MKDIR 0x0800 /* create directory, not regular file */
 
+void set_gid(u_int gid);
+int ipc_group_send(u_int whom, u_int val, const void *srcva, u_int perm);
+
 #endif
