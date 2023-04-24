@@ -472,11 +472,8 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 	while(head < tail) {
 		// printk("envid = %d\n", ee[head]->env_id);
 		for (int i = 0; i < n; ++ i) {
-			// printk("i = %x\n", i);
 			e = getEnv(i);
 			if (e == NULL) continue;
-			if(e->env_id != 0x800)
-				printk("%x %x %x\n", i, e->env_id, e->env_parent_id);
 			if (e->env_id == 0) {
 				continue;
 			}
@@ -485,19 +482,19 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 			}
 			if (e->env_parent_id == ee[head]->env_id) {
 				if (e->env_ipc_recving == 0) {
-					printk("envid = %d not recving!\n", ee[head]->env_id);
+					// printk("envid = %d not recving!\n", ee[head]->env_id);
 					return -E_IPC_NOT_RECV;
 				}
 				ee[tail ++] = e;
-				printk("%x %x\n", head, tail);
+				// printk("%x %x\n", head, tail);
 			}
 		}
 		head++;
 	}
-	// printk("ALL OK!\n");
-	printk("%x %x\n", head,tail);
-	envid2env(0x2003, &e, 0);
-	printk("%x %x\n", 0x2003, e->env_id);
+	// // printk("ALL OK!\n");
+	// printk("%x %x\n", head,tail);
+	// envid2env(0x2003, &e, 0);
+	// printk("%x %x\n", 0x2003, e->env_id);
 
 	for (int i = 1; i < tail; ++ i) {
 		e = ee[i];
