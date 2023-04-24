@@ -476,7 +476,7 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 			envid2env(i, &e, 0);
 			if (e == NULL) continue;
 			if(e->env_id != 0x800)
-				printk("%x %x %x\n", i, e->env_id, e->parent_id);
+				printk("%x %x %x\n", i, e->env_id, e->env_parent_id);
 			if (e->env_id == 0) {
 				continue;
 			}
