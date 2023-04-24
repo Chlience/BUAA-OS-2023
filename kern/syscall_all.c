@@ -524,6 +524,7 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 		}
 	}
 	
+	printk("ALL OK!\n");
 	return 0;
 }
 
