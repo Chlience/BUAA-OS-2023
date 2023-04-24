@@ -456,6 +456,7 @@ int sys_ipc_try_send(u_int envid, u_int value, u_int srcva, u_int perm) {
 }
 
 int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
+	printk("### TRY BROADCAST\n");
 	struct Env *e;
 	struct Page *p;
 
@@ -469,6 +470,7 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 	ee[0] = curenv;
 	int n = 1 << 10;
 	while(head < tail) {
+		printk("envid = %d\n", ee[head]->env_id);
 		for (int envid = 1; envid < n; ++ envid) {
 			envid2env(envid, &e, 0);
 			if (e->env_status != ENV_NOT_RUNNABLE && e->env_status != ENV_RUNNABLE) {
@@ -476,6 +478,7 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 			}
 			if (e->env_parent_id == ee[head]->env_id) {
 				if (e->env_ipc_recving == 0) {
+					printk("envid = %d not recving!\n", ee[head]->env_id);
 					return -E_IPC_NOT_RECV;
 				}
 				ee[tail ++] = e;
