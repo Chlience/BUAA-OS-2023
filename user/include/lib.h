@@ -137,4 +137,6 @@ int sync(void);
 #define O_EXCL 0x0400  /* error if already exists */
 #define O_MKDIR 0x0800 /* create directory, not regular file */
 
+void ipc_broadcast(u_int val, void * srcva, u_int perm);
+
 #endif
