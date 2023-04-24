@@ -57,8 +57,8 @@ int syscall_ipc_try_send(u_int envid, u_int value, const void *srcva, u_int perm
 	return msyscall(SYS_ipc_try_send, envid, value, srcva, perm);
 }
 
-int syscall_ipc_broadcast(u_int value, const void *srcva, u_int perm) {
-	return msyscall(SYS_ipc_broadcast, envid, value, srcva, perm);
+int syscall_ipc_try_broadcast(u_int value, const void *srcva, u_int perm) {
+	return msyscall(SYS_ipc_try_broadcast, value, srcva, perm);
 }
 
 int syscall_ipc_recv(void *dstva) {
