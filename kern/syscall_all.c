@@ -481,6 +481,7 @@ int sys_ipc_try_broadcast(u_int value, u_int srcva, u_int perm) {
 				ee[tail ++] = e;
 			}
 		}
+		head++;
 	}
 
 	for (int i = 1; i < tail; ++ i) {
