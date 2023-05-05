@@ -110,16 +110,22 @@ void init_disk() {
 
 	// Step 2: Initialize boundary.
 	nbitblock = (NBLOCK + BIT2BLK - 1) / BIT2BLK;
+	// 向上取整
 	nextbno = 2 + nbitblock;
+	// 能开始使用的第一个磁盘块
 
 	// Step 2: Initialize bitmap blocks.
 	for (i = 0; i < nbitblock; ++i) {
 		disk[2 + i].type = BLOCK_BMAP;
 	}
 	for (i = 0; i < nbitblock; ++i) {
+		// 注意，super 块和 bmap 块位图中可用
 		memset(disk[2 + i].data, 0xff, BY2BLK);
 	}
 	if (NBLOCK != nbitblock * BIT2BLK) {
+		// 假设位图并非全部塞满
+		// 将后面的没有对应的位置设为 0
+		// NBLOCK 一定是 8 的倍数
 		diff = NBLOCK % BIT2BLK / 8;
 		memset(disk[2 + (nbitblock - 1)].data + diff, 0x00, BY2BLK - diff);
 	}
