@@ -186,11 +186,13 @@ void free_block(u_int blockno) {
 	// You can refer to the function 'block_is_free' above.
 	// Step 1: If 'blockno' is invalid (0 or >= the number of blocks in 'super'), return.
 	/* Exercise 5.4: Your code here. (1/2) */
-
+	if (blockno == 0 || super == 0 || blockno >= super->s_nblocks) {
+		return;
+	}
 	// Step 2: Set the flag bit of 'blockno' in 'bitmap'.
 	// Hint: Use bit operations to update the bitmap, such as b[n / W] |= 1 << (n % W).
 	/* Exercise 5.4: Your code here. (2/2) */
-
+	bitmap[blockno / 32] |= (1 << (blockno % 32));
 }
 
 // Overview:
