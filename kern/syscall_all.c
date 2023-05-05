@@ -498,6 +498,8 @@ int sys_write_dev(u_int va, u_int pa, u_int len) {
 		|| (pa >= 0x13000000 && pa + len <= 0x13000000 + 0x4200)
 		|| (pa >= 0x15000000 && pa + len <= 0x15000000 + 0x200)) {
 		memcpy(KSEG1 + pa, va, len);
+		// 使用 memcpy，暗示了写入的是以 pa 为开始位置的物理地址
+		// 一般来说应该是一个缓冲区（拷贝）
 	}
 	else {
 		return -E_INVAL;
