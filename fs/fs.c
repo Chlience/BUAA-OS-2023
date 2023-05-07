@@ -138,11 +138,14 @@ int map_block(u_int blockno) {
 	// Step 1: If the block is already mapped in cache, return 0.
 	// Hint: Use 'block_is_mapped'.
 	/* Exercise 5.7: Your code here. (1/5) */
+	if (block_is_mapped(blockno)) {
+		return 0;
+	}
 
 	// Step 2: Alloc a page in permission 'PTE_D' via syscall.
 	// Hint: Use 'diskaddr' for the virtual address.
 	/* Exercise 5.7: Your code here. (2/5) */
-
+	syscall_mem_alloc(0, diskaddr(blockno), PTE_D);
 }
 
 // Overview:
@@ -151,14 +154,21 @@ void unmap_block(u_int blockno) {
 	// Step 1: Get the mapped address of the cache page of this block using 'block_is_mapped'.
 	void *va;
 	/* Exercise 5.7: Your code here. (3/5) */
+	if (!block_is_mapped(blockno)) {
+		return;
+	}
 
 	// Step 2: If this block is used (not free) and dirty in cache, write it back to the disk
 	// first.
 	// Hint: Use 'block_is_free', 'block_is_dirty' to check, and 'write_block' to sync.
 	/* Exercise 5.7: Your code here. (4/5) */
+	if (!block_is_free(blockno) && block_is_dirty(blockno)) {
+		write_block(blockno);
+	}
 
 	// Step 3: Unmap the virtual address via syscall.
 	/* Exercise 5.7: Your code here. (5/5) */
+	syscall_mem_unmap(0, diskaddr(blockno));
 
 	user_assert(!block_is_mapped(blockno));
 }
