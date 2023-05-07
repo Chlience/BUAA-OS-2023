@@ -13,7 +13,7 @@ int block_is_free(u_int);
 // Hint: Use 'DISKMAP' and 'BY2BLK' to calculate the address.
 void *diskaddr(u_int blockno) {
 	/* Exercise 5.6: Your code here. */
-
+	return (void *)DISKMAP + blockno * BY2BLK;
 }
 
 // Overview:
