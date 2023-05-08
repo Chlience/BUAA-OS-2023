@@ -39,17 +39,17 @@ u_int ipc_recv(u_int *whom, void *dstva, u_int *perm) {
 }
 
 void barrier_alloc(u_int barrier) {
-	u_int r = syscall_barrier_alloc(barrier);
-	// debugf("barrier_alloc(%u), return = %u\n", barrier, r);
+	syscall_barrier_alloc(barrier);
 }
 
 void barrier_wait() {
-	u_int r;
+	int r;
 	// debugf("env_id = %d begin barrier_wait()\n", env->env_id);
 	r = syscall_barrier_wait(1);
-	// debugf("barrier_wait(), return = %u\n", r);
+	// debugf("barrier_wait(), return = %d\n", r);
 	if (r) {
 		while(r = syscall_barrier_wait(0)) {
+			// debugf("barrier_wait(), return = %d\n", r);
 			syscall_yield();
 		}
 	}

@@ -79,5 +79,5 @@ int syscall_barrier_alloc(u_int num) {
 	return msyscall(SYS_barrier_alloc, num);
 }
 int syscall_barrier_wait(u_int num) {
-	return msyscall(SYS_barrier_wait);
+	return msyscall(SYS_barrier_wait, num);
 }
