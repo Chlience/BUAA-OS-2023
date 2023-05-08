@@ -513,6 +513,9 @@ int sys_read_dev(u_int va, u_int pa, u_int len) {
 }
 
 int check_sem_perm(int sem_id) {
+	if (sem_id >= 10 || sem_id < 0) {
+		return 0;
+	}
 	if (sems_usage[sem_id] == 0) {
 		return 0;
 	}
