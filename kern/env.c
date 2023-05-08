@@ -15,6 +15,10 @@ struct Env envs[NENV] __attribute__((aligned(BY2PG))); // All environments
 struct Env *curenv = NULL;	      // the current env
 static struct Env_list env_free_list; // Free list
 
+int barrier = 0;
+int barrier_wait = 0;
+int barrier_exist = 0;
+
 // Invariant: 'env' in 'env_sched_list' iff. 'env->env_status' is 'RUNNABLE'.
 struct Env_sched_list env_sched_list; // Runnable list
 

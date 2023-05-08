@@ -44,6 +44,9 @@ TAILQ_HEAD(Env_sched_list, Env);
 extern struct Env *curenv;		     			// the current env
 extern struct Env_sched_list env_sched_list;	// runnable env list
 
+extern int barrier;
+extern int barrier_exist;
+
 void env_init(void);
 int env_alloc(struct Env **e, u_int parent_id);
 void env_free(struct Env *);

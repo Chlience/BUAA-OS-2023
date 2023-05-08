@@ -512,6 +512,25 @@ int sys_read_dev(u_int va, u_int pa, u_int len) {
 	return 0;
 }
 
+int sys_barrier_alloc(u_int num) {
+	if (barrier_exist) {
+		return 1;
+	}
+	barrier_exist = 1;
+	barrier = num;
+	return 0;
+}
+
+int sys_barrier_wait(u_int num) {
+	if (!barrier_exist) {
+		return 0;
+	}
+	if (barrier) {
+		barrier -= num;
+	}
+	return barrier;
+}
+
 void *syscall_table[MAX_SYSNO] = {
     [SYS_putchar] = sys_putchar,
     [SYS_print_cons] = sys_print_cons,
@@ -531,6 +550,8 @@ void *syscall_table[MAX_SYSNO] = {
     [SYS_cgetc] = sys_cgetc,
     [SYS_write_dev] = sys_write_dev,
     [SYS_read_dev] = sys_read_dev,
+	[SYS_barrier_alloc] = sys_barrier_alloc,
+	[SYS_barrier_wait] = sys_barrier_wait,
 };
 
 /* Overview:

@@ -74,3 +74,10 @@ int syscall_read_dev(void *va, u_int dev, u_int len) {
 	/* Exercise 5.2: Your code here. (2/2) */
 
 }
+
+int syscall_barrier_alloc(u_int num) {
+	return msyscall(SYS_barrier_alloc, num);
+}
+int syscall_barrier_wait(u_int num) {
+	return msyscall(SYS_barrier_wait);
+}
