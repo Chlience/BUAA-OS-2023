@@ -512,6 +512,76 @@ int sys_read_dev(u_int va, u_int pa, u_int len) {
 	return 0;
 }
 
+int check_sem_perm(int sem_id) {
+	if (sems_usage[sem_id] == 0) {
+		return 0;
+	}
+	if (sems_perm[sem_id] == 0) {
+		return 1;
+	}
+	int perm_id = sems_perm[sem_id];
+	int envid = curenv->env_id;
+	struct Env *e;
+	while (envid != perm_id) {
+		envid2env(envid, &e, 0);
+		if (e->env_parent_id != 0) {
+			envid = e->env_parent_id;
+		} else {
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int sys_sem_init(const char *name, int init_value, int checkperm) {
+	for (int i = 0; i < 10; ++ i) {
+		if (!sems_usage[i]) {
+			strcpy(sems_name[i], name);
+			sems_value[i] = init_value;
+			sems_perm[i] = checkperm;
+			return 0;
+		}
+	}
+	return -E_NO_SEM;
+}
+
+int sys_sem_wait(int sem_id) {
+	if (!check_sem_perm(sem_id)) {
+		return -E_NO_SEM;
+	}
+	if (!sems_value[sem_id]) {
+		return -E_RETRY;
+	}
+	sems_value[sem_id]--;
+	return 0;
+}
+
+int sys_sem_post(int sem_id) {
+	if (!check_sem_perm(sem_id)) {
+		return -E_NO_SEM;
+	}
+	sems_value[sem_id]++;
+	return 0;
+}
+
+int sys_sem_getvalue(int sem_id) {
+	if (!check_sem_perm(sem_id)) {
+		return -E_NO_SEM;
+	}
+	return sems_value[sem_id];
+}
+
+int sys_sem_getid(const char *name) {
+	for (int i = 0; i < 10; i++) {
+		if (sems_usage[i] && !strcmp(name, sems_name)) {
+			if (check_sem_perm(i)) {
+				return i;
+			}
+		}
+	}
+	return -E_NO_SEM;
+}
+
 void *syscall_table[MAX_SYSNO] = {
     [SYS_putchar] = sys_putchar,
     [SYS_print_cons] = sys_print_cons,
@@ -531,6 +601,11 @@ void *syscall_table[MAX_SYSNO] = {
     [SYS_cgetc] = sys_cgetc,
     [SYS_write_dev] = sys_write_dev,
     [SYS_read_dev] = sys_read_dev,
+	[SYS_sem_init] = sys_sem_init,
+	[SYS_sem_wait] = sys_sem_wait,
+	[SYS_sem_post] = sys_sem_post,
+	[SYS_sem_getvalue] = sys_sem_getvalue,
+	[SYS_sem_getid] = sys_sem_getid,
 };
 
 /* Overview:

@@ -22,6 +22,11 @@ static Pde *base_pgdir;
 
 static uint32_t asid_bitmap[NASID / 32] = {0}; // 64
 
+char sems_name[10][40];
+int sems_value[10];
+int sems_perm[10];
+int sems_usage[10];
+
 /* Overview:
  *  Allocate an unused ASID.
  *
@@ -164,6 +169,14 @@ void env_init(void) {
 	/* Exercise 3.1: Your code here. (1/2) */
 	LIST_INIT(&env_free_list);
 	TAILQ_INIT(&env_sched_list);
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 40; j++) {
+			sems_name[i][j] = 0;
+		}
+		sems_perm[i] = 0;
+		sems_value[i] = 0;
+		sems_usage[i] = 0;
+	}
 
 	/* Step 2: Traverse the elements of 'envs' array, set their status to 'ENV_FREE' and insert
 	 * them into the 'env_free_list'. Make sure, after the insertion, the order of envs in the

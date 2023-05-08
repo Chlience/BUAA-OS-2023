@@ -44,6 +44,10 @@
 // File not a valid executable
 #define E_NOT_EXEC 13
 
+#define E_NO_SEM 14
+
+#define E_RETRY 15
+
 /*
  * A quick wrapper around function calls to propagate errors.
  * Use this with caution, as it leaks resources we've acquired so far.
