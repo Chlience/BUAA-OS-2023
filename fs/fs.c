@@ -168,7 +168,8 @@ void unmap_block(u_int blockno) {
 
 	// Step 3: Unmap the virtual address via syscall.
 	/* Exercise 5.7: Your code here. (5/5) */
-	syscall_mem_unmap(0, diskaddr(blockno));
+	va = diskaddr(blockno);
+	syscall_mem_unmap(0, va);
 
 	user_assert(!block_is_mapped(blockno));
 }
@@ -507,8 +508,10 @@ int dir_lookup(struct File *dir, char *name, struct File **file) {
 	for (int i = 0; i < nblock; i++) {
 		// Read the i'th block of 'dir' and get its address in 'blk' using 'file_get_block'.
 		void *blk;
-		/* Exercise 5.8: Your code here. (2/3) */\
-		try(file_get_block(dir, i, &blk));
+		/* Exercise 5.8: Your code here. (2/3) */
+		if ((r = file_get_block(dir, i, &blk)) < 0) {
+			return r;
+		}
 
 		struct File *files = (struct File *)blk;
 
