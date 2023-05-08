@@ -84,7 +84,7 @@ int syscall_sem_wait(int sem_id) {
 	while(r = msyscall(SYS_sem_wait, sem_id)) {
 		if (r == -E_NO_SEM) {
 			return r;
-		} else if (!r) {
+		} else if (r == 0) {
 			return 0;
 		}
 	}

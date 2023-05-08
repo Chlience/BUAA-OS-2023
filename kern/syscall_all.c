@@ -535,21 +535,22 @@ int check_sem_perm(int sem_id) {
 
 int sys_sem_init(const char *name, int init_value, int checkperm) {
 	for (int i = 0; i < 10; ++ i) {
-		if (!sems_usage[i]) {
+		if (sems_usage[i] == 0) {
 			strcpy(sems_name[i], name);
 			sems_value[i] = init_value;
-			sems_perm[i] = checkperm;
-			return 0;
+			sems_perm[i] = (checkperm == 0) ? 0 : curenv->env_id;
+			sems_usage[i] = 1;
+			return i;
 		}
 	}
 	return -E_NO_SEM;
 }
 
 int sys_sem_wait(int sem_id) {
-	if (!check_sem_perm(sem_id)) {
+	if (check_sem_perm(sem_id) == 0) {
 		return -E_NO_SEM;
 	}
-	if (!sems_value[sem_id]) {
+	if (sems_value[sem_id] == 0) {
 		return -E_RETRY;
 	}
 	sems_value[sem_id]--;
@@ -557,7 +558,7 @@ int sys_sem_wait(int sem_id) {
 }
 
 int sys_sem_post(int sem_id) {
-	if (!check_sem_perm(sem_id)) {
+	if (check_sem_perm(sem_id) == 0) {
 		return -E_NO_SEM;
 	}
 	sems_value[sem_id]++;
@@ -565,7 +566,7 @@ int sys_sem_post(int sem_id) {
 }
 
 int sys_sem_getvalue(int sem_id) {
-	if (!check_sem_perm(sem_id)) {
+	if (check_sem_perm(sem_id) == 0) {
 		return -E_NO_SEM;
 	}
 	return sems_value[sem_id];
@@ -573,10 +574,8 @@ int sys_sem_getvalue(int sem_id) {
 
 int sys_sem_getid(const char *name) {
 	for (int i = 0; i < 10; i++) {
-		if (sems_usage[i] && !strcmp(name, sems_name)) {
-			if (check_sem_perm(i)) {
-				return i;
-			}
+		if (check_sem_perm(i) == 1 && strcmp(sems_name[i], name) == 0) {
+			return i;
 		}
 	}
 	return -E_NO_SEM;
