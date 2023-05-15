@@ -37,3 +37,29 @@ u_int ipc_recv(u_int *whom, void *dstva, u_int *perm) {
 
 	return env->env_ipc_value;
 }
+
+u_int get_time(u_int *us) {
+	int temp = 0;
+	panic_on(msyscall(SYS_write_dev, &temp, 0x15000000, 4));
+	u_int total = 0;
+	panic_on(msyscall(SYS_read_dev, &total, 0x15000010, 4));
+	panic_on(msyscall(SYS_read_dev, us, 0x15000020, 4))
+	return total;
+}
+
+void usleep(u_int us) {
+	u_int time_us;
+	u_int time_s = get_time(&time_us);
+	u_int new_us;
+	u_int new_s;
+	u_long gap_us;
+	while (1) {
+		new_s = get_time(&new_us);
+		gap_us = (new_s - time_s) * 1000000 + new_us - time_us;
+		if (gap_us >= us) {
+			return;
+		} else {
+			yield();
+		}
+	}
+}
