@@ -94,7 +94,7 @@ int ssd_read(u_int logic_no, void *dst) {
 	if (ssd_map[logic_no] == -1) {
 		return -1;
 	}
-	u_int physical_no = ssd_map[logic_no]
+	u_int physical_no = ssd_map[logic_no];
 	ide_read(0, physical_no, dst, 1);
 	return 0;
 }
