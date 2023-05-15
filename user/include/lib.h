@@ -119,6 +119,9 @@ int remove(const char *path);
 int ftruncate(int fd, u_int size);
 int sync(void);
 
+u_int get_time(u_int *us);
+void usleep(u_int us);
+
 #define user_assert(x)                                                                             \
 	do {                                                                                       \
 		if (!(x))                                                                          \
