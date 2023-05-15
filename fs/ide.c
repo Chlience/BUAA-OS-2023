@@ -104,6 +104,10 @@ void ssd_erase(u_int logic_no) {
 		return;
 	}
 	u_int physical_no = ssd_map[logic_no];
+	for(int i = 0; i < 512 / 4; ++ i) {
+		temp_512[i] = 0;
+	}
+	ide_write(0, physical_no, temp_512, 1);
 	ssd_map[logic_no] = -1;
 	ssd_state[physical_no] = 1;
 	ssd_erase_time[physical_no]++;
