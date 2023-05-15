@@ -157,7 +157,7 @@ u_int alloc_ssd() {
 
 void ssd_write(u_int logic_no, void *src) {
 	if (ssd_map[logic_no] != -1) {
-		ssd_erase(logic_no);
+		ssd_erase(ssd_map[logic_no]);
 	}
 	u_int physical_no = alloc_ssd();
 	ssd_map[logic_no] = physical_no;
