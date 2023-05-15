@@ -77,6 +77,7 @@ void ide_write(u_int diskno, u_int secno, void *src, u_int nsecs) {
 	}
 }
 
+int temp_512[512 / 4];
 int ssd_map[32];
 int ssd_state[32]; // 0：可写，1：不可写
 int ssd_erase_time[32];
@@ -99,6 +100,7 @@ int ssd_read(u_int logic_no, void *dst) {
 	return 0;
 }
 
+
 void ssd_erase(u_int logic_no) {
 	if (ssd_map[logic_no] == -1) {
 		return;
@@ -112,8 +114,6 @@ void ssd_erase(u_int logic_no) {
 	ssd_state[physical_no] = 1;
 	ssd_erase_time[physical_no]++;
 }
-
-int temp_512[512 / 4];
 
 u_int alloc_ssd() {
 	u_int min_erase_no = -1;
