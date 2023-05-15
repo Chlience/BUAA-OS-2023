@@ -106,11 +106,11 @@ void ssd_erase(u_int logic_no) {
 		return;
 	}
 	u_int physical_no = ssd_map[logic_no];
+	ssd_map[logic_no] = -1;
 	for(int i = 0; i < 512 / 4; ++ i) {
 		temp_512[i] = 0;
 	}
 	ide_write(0, physical_no, temp_512, 1);
-	ssd_map[logic_no] = -1;
 	ssd_state[physical_no] = 0;
 	ssd_erase_time[physical_no]++;
 }
@@ -150,6 +150,7 @@ u_int alloc_ssd() {
 			}
 		}
 		ssd_erase(used_logic_no);
+		ssd_map[used_logic_no] = min_erase_no;
 		min_erase_no = used_min_erase_no;
 	}
 	return min_erase_no;
