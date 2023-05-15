@@ -43,7 +43,7 @@ u_int get_time(u_int *us) {
 	panic_on(msyscall(SYS_write_dev, &temp, 0x15000000, 4));
 	u_int total = 0;
 	panic_on(msyscall(SYS_read_dev, &total, 0x15000010, 4));
-	panic_on(msyscall(SYS_read_dev, us, 0x15000020, 4))
+	panic_on(msyscall(SYS_read_dev, us, 0x15000020, 4));
 	return total;
 }
 
@@ -59,7 +59,7 @@ void usleep(u_int us) {
 		if (gap_us >= us) {
 			return;
 		} else {
-			yield();
+			syscall_yield();
 		}
 	}
 }
