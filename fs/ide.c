@@ -76,3 +76,87 @@ void ide_write(u_int diskno, u_int secno, void *src, u_int nsecs) {
 		panic_on(temp == 0);
 	}
 }
+
+int ssd_map[32];
+int ssd_state[32]; // 0：可写，1：不可写
+int ssd_erase_time[32];
+int n = 32;
+
+void ssd_init() {
+	for (int i = 0; i < n; ++ i) {
+		ssd_map[i] = -1;
+		ssd_state[i] = 0;
+		ssd_erase_time[i] = 0;
+	}
+}
+
+int ssd_read(u_int logic_no, void *dst) {
+	if (ssd_map[logic_no] == -1) {
+		return -1;
+	}
+	u_int physical_no = ssd_map[logic_no]
+	ide_read(0, physical_no, dst, 1);
+	return 0;
+}
+
+void ssd_erase(u_int logic_no) {
+	if (ssd_map[logic_no] == -1) {
+		return;
+	}
+	u_int physical_no = ssd_map[logic_no];
+	ssd_map[logic_no] = -1;
+	ssd_state[physical_no] = 1;
+	ssd_erase_time[physical_no]++;
+}
+
+int temp_512[512 / 4];
+
+u_int alloc_ssd() {
+	u_int min_erase_no = -1;
+	for (int i = 0; i < n; ++ i) {
+		if (ssd_state[i] == 0) {
+			if (min_erase_no == -1 || ssd_erase_time[i] < ssd_erase_time[min_erase_no]) {
+				min_erase_no = i;
+			}
+		}
+	}
+	if (min_erase_no == - 1) {
+		debugf("no unused ssd block!\n");
+	}
+	if (ssd_erase_time[min_erase_no] >= 5) {
+		u_int used_min_erase_no = - 1;
+		for (int i = 0; i < n; ++ i) {
+			if (ssd_state[i] == 1) {
+				if (used_min_erase_no == -1 || ssd_erase_time[i] < ssd_erase_time[used_min_erase_no]) {
+					used_min_erase_no = i;
+				}
+			}
+		}
+		if (used_min_erase_no == - 1) {
+			debugf("no used ssd block!\n");
+		}
+		ide_read(0, used_min_erase_no, temp_512, 1);
+		ide_write(0, min_erase_no, temp_512, 1);
+		ssd_state[min_erase_no] = 1;
+		u_int used_logic_no = - 1;
+		for (int i = 0; i < 32; ++ i) {
+			if (ssd_map[i] == used_min_erase_no) {
+				used_logic_no = i;
+				break;
+			}
+		}
+		ssd_erase(used_logic_no);
+		min_erase_no = used_min_erase_no;
+	}
+	return min_erase_no;
+}
+
+void ssd_write(u_int logic_no, void *src) {
+	if (ssd_map[logic_no] != -1) {
+		ssd_erase(logic_no);
+	}
+	u_int physical_no = alloc_ssd();
+	ssd_map[logic_no] = physical_no;
+	ide_write(0, physical_no, src, 1);
+	ssd_state[physical_no] = 1;
+}
