@@ -111,7 +111,7 @@ void ssd_erase(u_int logic_no) {
 	}
 	ide_write(0, physical_no, temp_512, 1);
 	ssd_map[logic_no] = -1;
-	ssd_state[physical_no] = 1;
+	ssd_state[physical_no] = 0;
 	ssd_erase_time[physical_no]++;
 }
 
@@ -156,9 +156,7 @@ u_int alloc_ssd() {
 }
 
 void ssd_write(u_int logic_no, void *src) {
-	if (ssd_map[logic_no] != -1) {
-		ssd_erase(ssd_map[logic_no]);
-	}
+	ssd_erase(logic_no);
 	u_int physical_no = alloc_ssd();
 	ssd_map[logic_no] = physical_no;
 	ide_write(0, physical_no, src, 1);
