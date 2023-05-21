@@ -54,7 +54,7 @@ int open(const char *path, int mode) {
 	// Step 4: Alloc pages and map the file content using 'fsipc_map'.
 	for (int i = 0; i < size; i += BY2PG) {
 		/* Exercise 5.9: Your code here. (4/5) */
-		r = fsipc_map(fileid, i, va);
+		r = fsipc_map(fileid, i, va + i);
 		if (r != 0) { return r; }
 	}
 
