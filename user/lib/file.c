@@ -36,34 +36,31 @@ int open(const char *path, int mode) {
 	u_int size, fileid, type;
 	for (int i = 0; path[i]; ++ i) {
 		path_buf[i] = path[i];
+		path_buf[i + 1] = 0;
 	}
 
 	do {
-		debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
+		debugf("%s\n", path_buf);
 		r = fd_alloc(&fd);
 		if (r < 0) { return r; }
 		r = fsipc_open(path_buf, mode, fd);
 		if (r < 0) { return r; }
 
-		debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
 		va = fd2data(fd);
 		ffd = (struct Filefd *) fd;
 		size = ffd->f_file.f_size;
 		type = ffd->f_file.f_type;
 		fileid = ffd->f_fileid;
 
-		debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
 		for (int i = 0; i < size; i += BY2PG) {
 			r = fsipc_map(fileid, i, va + i);
 			if (r != 0) { return r; }
 		}
 
-		debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
 		if (type == FTYPE_LNK) {
 			file_read(fd, path_buf, size, 0);
 			r = file_close(fd);
 			if (r != 0) { return r; }
-			debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
 		}
 		debugf("file type: %d\n", type);
 	} while (type == FTYPE_LNK);
