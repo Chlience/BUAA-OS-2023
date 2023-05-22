@@ -76,6 +76,7 @@ void reverse_block(struct Block *b) {
 		}
 		reverse(&ff->f_indirect);
 		break;
+	case BLOCK_LINK:
 	case BLOCK_FILE:
 		f = (struct File *)b->data;
 		for (i = 0; i < FILE2BLK; ++i) {
@@ -253,7 +254,8 @@ void write_file(struct File *dirf, const char *path) {
 	if (target == NULL) {
 		return;
 	}
-
+	
+	int bno = next_block(BLOCK_FILE);
 	int fd = open(path, O_RDONLY);
 
 	// Get file name with no path prefix.
