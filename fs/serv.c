@@ -117,18 +117,18 @@ void serve_open(u_int envid, struct Fsreq_open *rq) {
 }
 
 void serve_openat(u_int envid, struct Fsreq_openat *rq) {
+	struct File *f;
+	struct Filefd *ff;
+	int r;
+	struct Open *o;
 	struct Open *pOpen;
+
 	if ((r = open_lookup(envid, rq->dir_fileid, &pOpen)) < 0) {
 		ipc_send(envid, r, 0, 0);
 		return;
 	}
 	struct File *dir = pOpen->o_file;
 
-	struct File *f;
-	struct Filefd *ff;
-	int r;
-	struct Open *o;
-	
 	// Find a file id.
 	if ((r = open_alloc(&o)) < 0) {
 		ipc_send(envid, r, 0, 0);
