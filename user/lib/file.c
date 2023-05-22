@@ -42,20 +42,21 @@ int open(const char *path, int mode) {
 	do {
 		debugf("%s\n", path_buf);
 		r = fd_alloc(&fd);
+		debugf("%d\n", r);
 		if (r < 0) { return r; }
 		r = fsipc_open(path_buf, mode, fd);
+		debugf("%d\n", r);
 		if (r < 0) { return r; }
-		debugf("wtf\n");
 
 		va = fd2data(fd);
 		ffd = (struct Filefd *) fd;
 		size = ffd->f_file.f_size;
 		type = ffd->f_file.f_type;
 		fileid = ffd->f_fileid;
-		debugf("wtf\n");
 
 		for (int i = 0; i < size; i += BY2PG) {
 			r = fsipc_map(fileid, i, va + i);
+			debugf("%d\n", r);
 			if (r != 0) { return r; }
 		}
 		debugf("wtf\n");
