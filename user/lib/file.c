@@ -28,6 +28,7 @@ char path_buf[MAXPATHLEN];
 //  the file descriptor on success,
 //  the underlying error on failure.
 int open(const char *path, int mode) {
+	debugf("open begin %s:\n", path);
 	int r;
 	struct Fd *fd;
 	char *va;
@@ -60,6 +61,7 @@ int open(const char *path, int mode) {
 			r = file_close(fd);
 			if (r != 0) { return r; }
 		}
+		debugf("file type: %d\n", type);
 	} while (type == FTYPE_LNK);
 
 	// Step 5: Return the number of file descriptor using 'fd2num'.
