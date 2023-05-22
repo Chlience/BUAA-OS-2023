@@ -34,13 +34,13 @@ int open(const char *path, int mode) {
 	char *va;
 	struct Filefd *ffd;
 	u_int size, fileid, type;
-	r = fd_alloc(&fd);
-	if (r < 0) { return r; }
-
 	for (int i = 0; path[i]; ++ i) {
 		path_buf[i] = path[i];
 	}
+
 	do {
+		r = fd_alloc(&fd);
+		if (r < 0) { return r; }
 		r = fsipc_open(path_buf, mode, fd);
 		if (r < 0) { return r; }
 
