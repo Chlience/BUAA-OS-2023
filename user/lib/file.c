@@ -60,10 +60,7 @@ int open(const char *path, int mode) {
 
 		debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
 		if (type == FTYPE_LNK) {
-			r = file_read(fd, path_buf, size, 0);
-			debugf("return r = %d\n", r);
-			if (r != 0) { return r; }
-			debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
+			file_read(fd, path_buf, size, 0);
 			r = file_close(fd);
 			if (r != 0) { return r; }
 			debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
