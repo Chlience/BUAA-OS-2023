@@ -62,8 +62,10 @@ int open(const char *path, int mode) {
 		if (type == FTYPE_LNK) {
 			r = file_read(fd, path_buf, size, 0);
 			if (r != 0) { return r; }
+			debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
 			r = file_close(fd);
 			if (r != 0) { return r; }
+			debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
 		}
 		debugf("file type: %d\n", type);
 	} while (type == FTYPE_LNK);
