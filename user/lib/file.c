@@ -63,6 +63,49 @@ int open(const char *path, int mode) {
 	return fd2num(fd);
 }
 
+int openat(int dirfd, const char *path, int mode) {
+	int r;
+
+	// Step 1: Alloc a new 'Fd' using 'fd_alloc' in fd.c.
+	// Hint: return the error code if failed.
+	struct Fd *fd;
+	/* Exercise 5.9: Your code here. (1/5) */
+	r = fd_alloc(&fd);
+	if (r < 0) { return r; }
+
+	struct Fd *dir;
+	r = fd_lookup(dirfd, &dir);
+	if (r < 0) { return r; }
+	u_int _fileid = ((struct Filefd *)dir)->f_fileid;
+
+	// Step 2: Prepare the 'fd' using 'fsipc_open' in fsipc.c.
+	/* Exercise 5.9: Your code here. (2/5) */
+	r = fsipc_openat(_fileid, path, mode, fd);
+	if (r < 0) { return r; }
+
+	// Step 3: Set 'va' to the address of the page where the 'fd''s data is cached, using
+	// 'fd2data'. Set 'size' and 'fileid' correctly with the value in 'fd' as a 'Filefd'.
+	char *va;
+	struct Filefd *ffd;
+	u_int size, fileid;
+	/* Exercise 5.9: Your code here. (3/5) */
+	va = fd2data(fd);
+	ffd = (struct Filefd *) fd;
+	size = ffd->f_file.f_size;
+	fileid = ffd->f_fileid;
+
+	// Step 4: Alloc pages and map the file content using 'fsipc_map'.
+	for (int i = 0; i < size; i += BY2PG) {
+		/* Exercise 5.9: Your code here. (4/5) */
+		r = fsipc_map(fileid, i, va + i);
+		if (r != 0) { return r; }
+	}
+
+	// Step 5: Return the number of file descriptor using 'fd2num'.
+	/* Exercise 5.9: Your code here. (5/5) */
+	return fd2num(fd);
+}
+
 // Overview:
 //  Close a file descriptor
 int file_close(struct Fd *fd) {
