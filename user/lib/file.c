@@ -39,6 +39,7 @@ int open(const char *path, int mode) {
 	}
 
 	do {
+		debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
 		r = fd_alloc(&fd);
 		if (r < 0) { return r; }
 		r = fsipc_open(path_buf, mode, fd);
