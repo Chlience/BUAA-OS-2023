@@ -41,12 +41,12 @@ int open(const char *path, int mode) {
 	}
 
 	do {
-		debugf("%s\n", path_buf);
+		// debugf("%s\n", path_buf);
 		r = fd_alloc(&fd);
-		debugf("%d\n", r);
+		// debugf("%d\n", r);
 		if (r < 0) { return r; }
 		r = fsipc_open(path_buf, mode, fd);
-		debugf("%d\n", r);
+		// debugf("%d\n", r);
 		if (r < 0) { return r; }
 
 		va = fd2data(fd);
@@ -57,18 +57,18 @@ int open(const char *path, int mode) {
 
 		for (int i = 0; i < size; i += BY2PG) {
 			r = fsipc_map(fileid, i, va + i);
-			debugf("%d\n", r);
+			// debugf("%d\n", r);
 			if (r != 0) { return r; }
 		}
-		debugf("wtf\n");
+		// debugf("wtf\n");
 
 		if (type == FTYPE_LNK) {
 			file_read(fd, path_buf, size, 0);
 			path_buf[size] = 0;
 			r = file_close(fd);
-			debugf("%d\n", r);
+			// debugf("%d\n", r);
 		}
-		debugf("file type: %d\n", type);
+		// debugf("file type: %d\n", type);
 	} while (type == FTYPE_LNK);
 
 	// Step 5: Return the number of file descriptor using 'fd2num'.
