@@ -34,6 +34,7 @@ int open(const char *path, int mode) {
 	char *va;
 	struct Filefd *ffd;
 	u_int size, fileid, type;
+
 	for (int i = 0; path[i]; ++ i) {
 		path_buf[i] = path[i];
 		path_buf[i + 1] = 0;
@@ -63,6 +64,7 @@ int open(const char *path, int mode) {
 
 		if (type == FTYPE_LNK) {
 			file_read(fd, path_buf, size, 0);
+			path_buf[size] = 0;
 			r = file_close(fd);
 			debugf("%d\n", r);
 		}
