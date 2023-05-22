@@ -19,6 +19,8 @@ struct Dev devfile = {
     .dev_stat = file_stat,
 };
 
+char path_buf[MAXPATHLEN];
+
 // Overview:
 //  Open a file (or directory).
 //
@@ -27,36 +29,38 @@ struct Dev devfile = {
 //  the underlying error on failure.
 int open(const char *path, int mode) {
 	int r;
-
-	// Step 1: Alloc a new 'Fd' using 'fd_alloc' in fd.c.
-	// Hint: return the error code if failed.
 	struct Fd *fd;
-	/* Exercise 5.9: Your code here. (1/5) */
+	char *va;
+	struct Filefd *ffd;
+	u_int size, fileid, type;
 	r = fd_alloc(&fd);
 	if (r < 0) { return r; }
 
-	// Step 2: Prepare the 'fd' using 'fsipc_open' in fsipc.c.
-	/* Exercise 5.9: Your code here. (2/5) */
-	r = fsipc_open(path, mode, fd);
-	if (r < 0) { return r; }
-
-	// Step 3: Set 'va' to the address of the page where the 'fd''s data is cached, using
-	// 'fd2data'. Set 'size' and 'fileid' correctly with the value in 'fd' as a 'Filefd'.
-	char *va;
-	struct Filefd *ffd;
-	u_int size, fileid;
-	/* Exercise 5.9: Your code here. (3/5) */
-	va = fd2data(fd);
-	ffd = (struct Filefd *) fd;
-	size = ffd->f_file.f_size;
-	fileid = ffd->f_fileid;
-
-	// Step 4: Alloc pages and map the file content using 'fsipc_map'.
-	for (int i = 0; i < size; i += BY2PG) {
-		/* Exercise 5.9: Your code here. (4/5) */
-		r = fsipc_map(fileid, i, va + i);
-		if (r != 0) { return r; }
+	for (int i = 0; path[i]; ++ i) {
+		path_buf[i] = path[i];
 	}
+	do {
+		r = fsipc_open(path_buf, mode, fd);
+		if (r < 0) { return r; }
+
+		va = fd2data(fd);
+		ffd = (struct Filefd *) fd;
+		size = ffd->f_file.f_size;
+		type = ffd->f_file.f_type;
+		fileid = ffd->f_fileid;
+
+		for (int i = 0; i < size; i += BY2PG) {
+			r = fsipc_map(fileid, i, va + i);
+			if (r != 0) { return r; }
+		}
+
+		if (type == FTYPE_LNK) {
+			r = file_read(fd, path_buf, size, 0);
+			if (r != 0) { return r; }
+			r = file_close(fd)) < 0;
+			if (r != 0) { return r; }
+		}
+	} while (type == FTYPE_LNK);
 
 	// Step 5: Return the number of file descriptor using 'fd2num'.
 	/* Exercise 5.9: Your code here. (5/5) */
