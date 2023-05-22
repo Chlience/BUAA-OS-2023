@@ -255,7 +255,6 @@ void write_file(struct File *dirf, const char *path) {
 		return;
 	}
 	
-	int bno = next_block(BLOCK_FILE);
 	int fd = open(path, O_RDONLY);
 
 	// Get file name with no path prefix.
@@ -360,9 +359,9 @@ int main(int argc, char **argv) {
 		} else if (S_ISREG(stat_buf.st_mode)) {
 			printf("writing regular file '%s' into disk\n", name);
 			write_file(&super.s_root, name);
-		} else if S_ISLNK(stat_buf.stmode) {
+		} else if (S_ISLNK(stat_buf.st_mode)) {
 			printf("writing symbolic link '%s' into disk\n", name);
-			write_symlink((&super.s_root, name);
+			write_symlink(&super.s_root, name);
 		} else {
 			fprintf(stderr, "'%s' has illegal file mode %o\n", name, stat_buf.st_mode);
 			exit(2);
