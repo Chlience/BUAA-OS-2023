@@ -45,17 +45,20 @@ int open(const char *path, int mode) {
 		r = fsipc_open(path_buf, mode, fd);
 		if (r < 0) { return r; }
 
+		debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
 		va = fd2data(fd);
 		ffd = (struct Filefd *) fd;
 		size = ffd->f_file.f_size;
 		type = ffd->f_file.f_type;
 		fileid = ffd->f_fileid;
 
+		debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
 		for (int i = 0; i < size; i += BY2PG) {
 			r = fsipc_map(fileid, i, va + i);
 			if (r != 0) { return r; }
 		}
 
+		debugf("HHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLL\n");
 		if (type == FTYPE_LNK) {
 			r = file_read(fd, path_buf, size, 0);
 			if (r != 0) { return r; }
